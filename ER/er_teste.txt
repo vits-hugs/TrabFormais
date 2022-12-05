@@ -1,0 +1,2 @@
+ou : a|b
+conc: ab
