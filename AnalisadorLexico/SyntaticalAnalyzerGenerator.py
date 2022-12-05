@@ -20,6 +20,7 @@ class ContextFreeGrammar:
     initial_symbol: str
     non_terminals: set
     productions: dict
+    follow_dict: dict
     #ordered_productions is a list of tuples, where the first element of the tuple
     #is the head of the production and the second is the body as a list of symbols.
     ordered_productions: list
@@ -28,6 +29,7 @@ class ContextFreeGrammar:
         self.alphabet = alphabet
         self.initial_symbol = initial_symbol
         self.non_terminals = non_terminals
+        self.follow_dict = None
 
     def __orderProductions__(self):
         self.ordered_productions = []
@@ -51,33 +53,80 @@ class ContextFreeGrammar:
             if (production[0] is self.initial_symbol):
                 return (i, 0)
     
-    def first(self, symbol: str, non_terminals_visited = set()):
+    #Grammar must be non-left-recursive
+    def __first__(self, symbol):
         if (symbol in self.alphabet):
             return set(symbol)
         elif(symbol in self.non_terminals):
             first_set = set()
-            non_terminals_visited.add(symbol)
             for production in self.productions[symbol]:
                 if (production[0] is "&"):
                     first_set.add("&")
                 else:
-                    for i, production_symbol in enumerate(production):
-                        if (production_symbol not in non_terminals_visited):
-                            production_symbol_first = self.first(production_symbol, non_terminals_visited)
-                            first_set = first_set.union(production_symbol_first)
-                            if ("&" not in production_symbol_first):
-                                break
-                        continue
+                    for production_symbol in production:
+                        production_symbol_first = self.first(production_symbol)
+                        first_set = first_set.union(production_symbol_first)
+                        if ("&" not in production_symbol_first):
+                            break
             return first_set
         elif (symbol is "&"):
-            pass    
+            return set("&")
         else:
             return set()
+
+    #Grammar must be non-left-recursive
+    def first(self, sequence: list):
+        first_set = set()
+        for symbol in sequence:
+            symbol_first = self.__first__(symbol)
+            first_set = first_set.union(symbol_first.difference(set("&")))
+            if ("&" not in symbol_first):
+                return first_set
+        return first_set.union("&")
+
+    def __followDictLen__(self, follow_dict):
+        count = 0
+        for item in follow_dict.items():
+            count += len(item[1])
+        return count
+
+
+    def __follow__(self):
+        follow_dict = dict()
+        for non_terminal in self.non_terminals:
+            if (non_terminal == self.initial_symbol):
+                follow_dict[non_terminal] = set("$")
+            else:
+                follow_dict[non_terminal] = set()
+            for production in self.ordered_productions:
+                if (non_terminal in production[1]):
+                    for i, symbol in enumerate(production[1]):
+                        if (symbol == non_terminal and i < len(production[1]) - 1):
+                            follow_index = production[i] + 1
+                            follow_dict[non_terminal] = follow_dict[non_terminal].union(self.first(production[follow_index:]).remove("&"))
+        prev_dict_len = self.__followDictLen__(follow_dict)
+        while (True):
+            for non_terminal in self.non_terminals:
+                for production in self.ordered_productions:
+                    if (non_terminal in production[1]):
+                        for i, symbol_iterator in enumerate(production[1]):
+                            if (symbol_iterator == non_terminal):
+                                if ("&" in self.first(production[1][i+1:])):
+                                    follow_dict[non_terminal] = follow_dict[non_terminal].union(follow_dict[production[0]])
+                                    break
+            curr_dict_len = self.__followDictLen__(follow_dict)
+            if (curr_dict_len == prev_dict_len):
+                return follow_dict
+            else:
+                prev_dict_len = curr_dict_len
+
+    def follow(self, non_terminal):
+        if (non_terminal not in self.non_terminals):
+            return
+        if (not self.follow_dict):
+            self.follow_dict = self.__follow__()
+        return self.follow_dict[non_terminal]
         
-
-    def follow(self):
-        pass
-
 class SyntaxTree:
     pass
 
