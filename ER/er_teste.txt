@@ -1,3 +1,1 @@
-a: a*.(a|b)*
-b: a.b.c|b.c.b
-c: (a|b).(a|b).(a|b)
+pastel: (a|b)*.a.b.b
