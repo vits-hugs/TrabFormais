@@ -4,6 +4,9 @@ class Automaton:
             self.name = name
             self.transitions = transitions
             self.token = token
+        
+        def __getitem__(self, key):
+            return self.transitions[key]
 
     def __init__(self, initial_state_name: str, transition_table: dict[str, State]):
         self.initial_state_name = initial_state_name
