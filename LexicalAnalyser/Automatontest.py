@@ -76,8 +76,6 @@ class TestAutomaton(unittest.TestCase):
         AFD = automaton.getDeterministic()
         AFD.print()
 
-        assert
-
 
 if __name__ == '__main__':
     unittest.main()
