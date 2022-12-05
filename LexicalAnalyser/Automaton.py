@@ -16,6 +16,25 @@ class Automaton:
         self.alfabet = alfabet
         self.transition_table = transition_table
 
+    def getToken(self, string, begin: int):
+        foward = begin
+        token = None
+        current_state_name = self.initial_state_name
+        while current_state_name != ():
+
+            current_state = self.transition_table[current_state_name]
+            if current_state.token_type != None:
+                token = current_state.token_type
+
+            if foward >= len(string):
+                foward += 1
+                break
+
+            current_state_name = self.transition_table[current_state_name][string[foward]]
+            foward += 1
+
+        return token, foward - 1
+
     def e_closure(self, states: tuple[str] | str):
         if isinstance(states, tuple):
             stack = list(states)
