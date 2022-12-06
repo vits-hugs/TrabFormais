@@ -72,9 +72,9 @@ class TestAutomaton(unittest.TestCase):
         }
 
         automaton = Automaton('q0', ['0', '1', '2'] ,transition_table)
-        automaton.print()
+        automaton.printAsAFD()
         AFD = automaton.getDeterministic()
-        AFD.print()
+        AFD.printAsAFD()
 
 
 if __name__ == '__main__':

@@ -1,5 +1,6 @@
 import copy
 from PriorityTable import PriorityTable
+import sys
 
 class State:
     def __init__(self, name, transitions=dict(), token_type: str = None):
@@ -131,13 +132,67 @@ class Automaton:
 
         return new_automaton
 
-    def print(self):
-        for state_name, state in self.transition_table.items():
-            print(str(state_name).ljust(20), end=' ')
-            print("Transitions: ", str(state.transitions).ljust(70), end=' ')
-            print("Token: ", state.token_type)
-        print()
+    def printAsAFD(self, file = sys.stdout):
+        # Número de estados
+        print(len(self.transition_table))
 
+        # Estado inicial
+        print(self.initial_state_name)
+
+        # Estados finais
+        end_states = []
+        for _, state in self.transition_table.items():
+            if state.token_type != None:
+                end_states.append(state.name)
+        for state in end_states[:-1]:
+            print(state, end=',')
+        print(end_states[-1])
+
+        # Alfabeto
+        for char in self.alfabet[:-1]:
+            print(char, end=',')
+        print(self.alfabet[-1])
+
+        # Transições
+        all_transitions = []
+        for key, state in self.transition_table.items():
+            for char, dest_state in state.transitions.items():
+                all_transitions.append((key, char, dest_state))
+        for transition in all_transitions:
+            print(transition[0], transition[1], transition[2], sep=',')
+    
+    def printAsAFND(self, file = sys.stdout):
+        # Número de estados
+        print(len(self.transition_table))
+
+        # Estado inicial
+        print(self.initial_state_name)
+
+        # Estados finais
+        end_states = []
+        for _, state in self.transition_table.items():
+            if state.token_type != None:
+                end_states.append(state.name)
+        for state in end_states[:-1]:
+            print(state, end=',')
+        print(end_states[-1])
+
+        # Alfabeto
+        for char in self.alfabet[:-1]:
+            print(char, end=',')
+        print(self.alfabet[-1])
+
+        # Transições
+        all_transitions = []
+        for key, state in self.transition_table.items():
+            for char, dest_state in state.transitions.items():
+                all_transitions.append((key, char, dest_state))
+        for transition in all_transitions:
+            print(transition[0], transition[1], sep=',', end=',')
+            if isinstance(transition[2], tuple):
+                for i in transition[2][:-1]:
+                    print(i, end='-')
+                print(transition[2][-1])
 
 def test_joinThroughEpsilon():
 
@@ -185,12 +240,11 @@ def test_joinThroughEpsilon():
 
     fuck_yeah = automaton_1.joinThroughEpsilon([automaton_2, automaton_3])
 
-    automaton_1.print()
-    automaton_2.print()
-    automaton_3.print()
+    automaton_1.printAsAFND()
+    automaton_2.printAsAFND()
+    automaton_3.printAsAFND()
 
-    fuck_yeah.print()
-
+    fuck_yeah.printAsAFD()
 
 def test_getDeterministic():
 
@@ -223,15 +277,15 @@ def test_getDeterministic():
     })
 
 
-    automaton_1.print()
+    automaton_1.printAsAFD()
     AFD_1 = automaton_1.getDeterministic()
-    AFD_1.print()
+    AFD_1.printAsAFD()
 
-    automaton_2.print()
+    automaton_2.printAsAFD()
     priority_table_1 = PriorityTable(['for', 'OP', 'id'])
     AFD_2 = automaton_2.getDeterministic(priority_table_1)
-    AFD_2.print()
+    AFD_2.printAsAFD()
 
 
 if __name__ == '__main__':
-    test_getDeterministic()
+    test_joinThroughEpsilon()
