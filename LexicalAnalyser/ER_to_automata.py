@@ -226,11 +226,7 @@ class ER_to_automata:
             i_array.append(i.id)
         return i_array
 
-    def int_arr_to_name(self,U):
-        list_nome = sorted(U)
-        nome = ''.join(list(map(str,list_nome)))
-        return nome
-
+ 
     def make_union(self,S,tree:Node ,char): # União do followpos dos estados em S, que estão em a
         correspondenc_table = tree.char_correspondence(char)
         follow_pos_table = tree.follow_pos_table()
@@ -242,7 +238,7 @@ class ER_to_automata:
 
     def array_to_state_name(self,array):
         list_nome = sorted(array)
-        nome = '_'.join(list(map(str,list_nome)))
+        nome = ''.join(list(map(str,list_nome)))
         return nome
 
     def is_in_Dstates(self,U_name,Dstates,usedDstates):
@@ -255,7 +251,7 @@ class ER_to_automata:
         return False
 
     def tree_to_afd(self,tree : Node,alphabet: list[str],token):
-        initial_state = self.int_arr_to_name(self.get_firtpos_int_array(tree.firstpos()))
+        initial_state = self.array_to_state_name(self.get_firtpos_int_array(tree.firstpos()))
         automato = Automaton(initial_state,alphabet,{})
         Dstates = [self.get_firtpos_int_array(tree.firstpos())]
         usedDstates = []

@@ -39,7 +39,7 @@ class LexicalAnalyserGenerator:
     
     @staticmethod
     def getLexicalAnalyser(ERs):
-        automata, priority_table = ER_to_automata.getAutomata(ERs)
+        automata, priority_table = ER_to_automata().getAutomata(ERs)
         automata: list[Automaton]
         priority_table: PriorityTable
 
@@ -48,3 +48,6 @@ class LexicalAnalyserGenerator:
         complete_AFD = complete_AFND.getDeterministic(priority_table)
 
         return LexicalAnalyser(complete_AFD)
+
+if __name__ == '__main__':
+    algo = LexicalAnalyserGenerator().getLexicalAnalyser('ER/er_teste.txt')

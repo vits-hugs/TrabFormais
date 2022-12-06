@@ -46,11 +46,12 @@ class Automaton:
 
         while stack:
             t = stack.pop()
-
-            for u in self.transition_table[t]['epsilon']:
-                if u not in e_closure:
-                    e_closure.add(u)
-                    stack.append(u)
+            if t in self.transition_table.keys():
+                if 'epsilon' in self.transition_table[t].transitions.keys():
+                    for u in self.transition_table[t]['epsilon']:
+                        if u not in e_closure:
+                            e_closure.add(u)
+                            stack.append(u)
 
         e_closure_tuple = list(e_closure)
         e_closure_tuple.sort()
