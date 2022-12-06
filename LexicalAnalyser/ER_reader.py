@@ -1,12 +1,15 @@
 import os
 from Automaton import Automaton
-
+import string
 
 class ER_parser:
 
     def __init__(self) -> None:
         self.definitions = dict()
+        self.pre_things = {'[0-9]':'(0|1|2|3|4|5|6|7|8|9)*',
+                            '[a-zA-Z]':f'({"|".join(list(string.ascii_letters))})*'}
         self.priority = []
+
     def parseEr(self,file):
 
         file = open(file,'r')
@@ -18,8 +21,12 @@ class ER_parser:
             if line != "":
                 definition = line.split(":")
                 self.priority.append(definition[0])
-        
-                self.definitions[definition[0]] = definition[1]
+                for key,value in self.definitions.items():
+                    definition[1] = definition[1].replace(key,value)
+                for key,value in self.pre_things.items():
+                    definition[1] =definition[1].replace(key,value)
+                self.definitions[definition[0]] = definition[1].strip()
+        print(self.definitions)
     
     def get_inner_parent(self,regex):
         pilha = []

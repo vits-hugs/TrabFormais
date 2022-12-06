@@ -285,11 +285,12 @@ class ER_to_automata:
         automata_conv = ER_to_Tree()
         tree = automata_conv.Er_to_tree(obj.definitions[token][::-1])
         tree = Node('.',tree,Node('#'))
+        print(tree)
         tree.calculateFollowpos()
         return self.tree_to_afd(tree,alphabet,token)
 
 
-    def getAutomata(self,file,alphabet=list(string.ascii_lowercase)):
+    def getAutomata(self,file,alphabet=list(string.ascii_letters+string.digits)):
         global id
         parser = ER_parser()
         parser.parseEr(file)
