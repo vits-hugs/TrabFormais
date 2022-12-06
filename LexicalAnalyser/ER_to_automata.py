@@ -57,7 +57,7 @@ class Node:
         return max(node.id for node in self.get_leafs())
 
 
-    def char_num(self):
+    def correspondence_table(self):
         dic =dict()
         for i in self.get_leafs():
             if i.type in dic.keys():
@@ -65,6 +65,12 @@ class Node:
             else:
                 dic[i.type] = [i.id]
         return dic
+    
+    def char_correspondence(self,char):
+        dic = self.correspondence_table()
+        if char not in dic.keys():
+            return []
+        return dic[char]
     
 
     def __str__(self):
@@ -219,7 +225,7 @@ class ER_to_automata:
         while len(S) > 0:
             last = S.pop()
             for i in automato.alfabet:
-                U = self.make_union(i,last,tree.char_num(),tree.follow_pos_table())
+                U = self.make_union(i,last,tree.correspondence_table(),tree.follow_pos_table())
                 if len(U) > 1:
                     if not self.is_in(U,automato,S):
                             S.append(U)
@@ -236,15 +242,70 @@ class ER_to_automata:
 
         return automato
 
+    def make_union2(self,S,tree:Node ,char): # União do followpos dos estados em S, que estão em a
+        correspondenc_table = tree.char_correspondence(char)
+        follow_pos_table = tree.follow_pos_table()
+        U = set()
+        for p in S:
+            if p in correspondenc_table:
+                U = U.union(follow_pos_table[str(p)])    
+        return U
+
+    def array_to_state_name(self,array):
+        list_nome = sorted(array)
+        nome = '_'.join(list(map(str,list_nome)))
+        return nome
+
+    def is_in_Dstates(self,U_name,Dstates,usedDstates):
+        for l_array in Dstates:
+            if U_name == self.array_to_state_name(l_array):
+                return True
+        for l_array in usedDstates:
+            if U_name == self.array_to_state_name(l_array):
+                return True
+        return False
+
+    def tree_to_afd_1(self,tree : Node,alphabet: list[str],token):
+        initial_state = self.int_arr_to_name(self.get_firtpos_int_array(tree.firstpos()))
+        automato = Automaton(initial_state,alphabet)
+        Dstates = [self.get_firtpos_int_array(tree.firstpos())]
+        usedDstates = []
+        while len(Dstates) > 0:
+           S =  Dstates.pop()
+           usedDstates.append(S)
+           
+           for char in alphabet:
+                U = self.make_union2(S,tree,char) 
+                if U:
+                    U_name = self.array_to_state_name(list(U))
+                    if not self.is_in_Dstates(U_name,Dstates,usedDstates): 
+                        Dstates.append(U)
+                    #print(f'{self.array_to_state_name(S)},{char}-> {U_name}')
+                    #adiciona transição [S,a] -> U
+                    estado_name = self.array_to_state_name(S)
+                    if estado_name in automato.transition_table.keys():
+                            automato.transition_table[estado_name].transitions[char]= U_name
+                    else:
+                        if tree.accept_number() in S:
+                            automato.transition_table[estado_name] = State(estado_name,{char:U_name},token)
+                        else:
+                            automato.transition_table[estado_name] = State(estado_name,{char:U_name})
+                    if U_name not in automato.transition_table.keys():
+                        if tree.accept_number() in U:
+                            automato.transition_table[U_name] = State(U_name,{},token)
+
+        automato.printAsAFD()
+        return automato
+
     def get_automato(self,obj,token,alphabet=list(string.ascii_lowercase)):
         automata_conv = ER_to_Tree()
         tree = automata_conv.Er_to_tree(obj.definitions[token][::-1])
         tree = Node('.',tree,Node('#'))
         print(tree)
         tree.calculateFollowpos()
-        auto = self.tree_to_afd(tree,alphabet,token)
+        auto = self.tree_to_afd_1(tree,alphabet,token)
         #print(auto.initial_state_name)
-        auto.printAsAFD()
+        #auto.printAsAFD()
 
     def automata_from_file(self,file):
         global id

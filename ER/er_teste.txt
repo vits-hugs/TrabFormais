@@ -1,1 +1,1 @@
-pastel: (a|b)*.a.b.b
+ab: ((a.b)*|a.b).c
