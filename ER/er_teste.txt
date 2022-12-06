@@ -1,4 +1,4 @@
 token_1: ((a.b)*|a.b).c
 token_2: c.d
 token_3: (a|b)*.l.m
-token_4: (a|b).(c|d)
+token_4: a?.d?

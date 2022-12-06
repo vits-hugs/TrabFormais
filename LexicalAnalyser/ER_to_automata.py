@@ -85,8 +85,12 @@ class Node:
             return self.node_left.nullable() or self.node_right.nullable()
         elif self.type == '.':
             return self.node_left.nullable() and self.node_right.nullable()
+        elif self.type == '+':
+            return self.node_left.nullable() and self.node_right.nullable()
         elif self.type == '*':
             return True
+        elif self.type == '?':
+            return True 
         else:
             return False
     
@@ -101,6 +105,11 @@ class Node:
         elif self.type == '*':
             return self.node_left.firstpos()
 
+        elif self.type == '+':
+            return self.node_left.firstpos()
+        
+        elif self.type == '?':
+            return self.node_left.firstpos()
        
         return set([self])
 
@@ -114,6 +123,14 @@ class Node:
                 return self.node_right.lastpos()
         elif self.type == '*':
             return self.node_left.lastpos()
+        
+        elif self.type == '+':
+            return self.node_left.lastpos()
+        
+        elif self.type == '?':
+           return self.node_left.lastpos()
+            
+
 
         
         return set([self])
@@ -131,8 +148,13 @@ class Node:
         if self.type == '*':
             for node in self.lastpos():
                 node.followpos = node.followpos.union(self.firstpos())
-    
+
+        if self.type == '+':
+            for node in self.lastpos():
+                node.followpos = node.followpos.union(self.firstpos())
      
+            
+            
 
 class ER_to_Tree:
     def __init__(self):
@@ -172,6 +194,14 @@ class ER_to_Tree:
         if self.search_char(regex,'*')>= 0:
             l,r = self.get_sides(self.search_char(regex,'*'),regex)
             return Node('*',self.Er_to_tree(l))
+        
+        if self.search_char(regex,'+')>= 0:
+            l,r = self.get_sides(self.search_char(regex,'+'),regex)
+            return Node('+',self.Er_to_tree(l))
+
+        if self.search_char(regex,'?')>= 0:
+            l,r = self.get_sides(self.search_char(regex,'?'),regex)
+            return Node('?',self.Er_to_tree(l))
 
 
         if regex[0] == ')' and regex[-1] == '(':
