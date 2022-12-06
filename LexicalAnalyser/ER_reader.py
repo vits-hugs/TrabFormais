@@ -6,7 +6,7 @@ class ER_parser:
 
     def __init__(self) -> None:
         self.definitions = dict()
-
+        self.priority = []
     def parseEr(self,file):
 
         file = open(file,'r')
@@ -17,7 +17,8 @@ class ER_parser:
             line = line.replace('\n','')
             if line != "":
                 definition = line.split(":")
-            #
+                self.priority.append(definition[0])
+            #   
             #for key in self.definitions:
             #    if key in definition[1]:
             #        definition[1] = definition[1].replace(key,self.definitions[key])
