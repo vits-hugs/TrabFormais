@@ -3,7 +3,7 @@ from ER_reader import ER_parser
 from Automaton import Automaton,State
 
 
-ESPECIAL_CARACTERS = ['?','*','+','o','|']
+ESPECIAL_CARACTERS = ['?','*','+','.','|']
 global id
 id = 1
 class Node:
@@ -17,7 +17,6 @@ class Node:
         if type not in ESPECIAL_CARACTERS:
             self.id = id
             id+=1
-    
     def show_leafs(self):
         if self.node_left == None and self.node_right == None:
             print(self)
@@ -51,6 +50,11 @@ class Node:
         for leaf in self.get_leafs():
             dic[str(leaf.id)] = [i.id for i in list(leaf.followpos)]
         return dic
+    
+    def accept_number(self):
+        return max(node.id for node in self.get_leafs())
+
+
     def char_num(self):
         dic =dict()
         for i in tree.get_leafs():
@@ -70,7 +74,7 @@ class Node:
     def nullable(self):
         if self.type == '|':
             return self.node_left.nullable() or self.node_right.nullable()
-        elif self.type == 'o':
+        elif self.type == '.':
             return self.node_left.nullable() and self.node_right.nullable()
         elif self.type == '*':
             return True
@@ -80,7 +84,7 @@ class Node:
     def firstpos(self):
         if self.type == '|':
             return self.node_left.firstpos().union(self.node_right.firstpos())
-        elif self.type == 'o':
+        elif self.type == '.':
             if self.node_left.nullable():
                 return self.node_left.firstpos().union(self.node_right.firstpos())
             else:
@@ -94,7 +98,7 @@ class Node:
     def lastpos(self):
         if self.type == '|':
             return self.node_left.firstpos().union(self.node_right.firstpos())
-        elif self.type == 'o':
+        elif self.type == '.':
             if self.node_right.nullable():
                 return self.node_left.firstpos().union(self.node_right.firstpos())
             else:
@@ -111,7 +115,7 @@ class Node:
            self.node_left.calculateFollowpos()
         if self.node_right:
            self.node_right.calculateFollowpos()
-        if self.type == 'o':
+        if self.type == '.':
             for node in self.node_left.lastpos():
                 node.followpos = node.followpos.union(self.node_right.firstpos())
 
@@ -157,7 +161,7 @@ class ER_to_automata:
         
         if self.search_char(regex,'.') >= 0:
             l,r = self.get_sides(self.search_char(regex,'.'),regex)
-            return Node('o',self.Er_to_tree(l),self.Er_to_tree(r))
+            return Node('.',self.Er_to_tree(l),self.Er_to_tree(r))
 
         if self.search_char(regex,'*')>= 0:
             l,r = self.get_sides(self.search_char(regex,'*'),regex)
@@ -175,6 +179,8 @@ def to_name(set_of):
 
 def make_union(char,S,char_to,follow_pos_table):
     ret = []
+    if char not in char_to.keys():
+        return ret
     for ch in char_to[char] :
         if ch in S:
             for y in follow_pos_table[str(ch)]:
@@ -196,14 +202,16 @@ def get_firtpos_int_array(firs_pos):
     for i in firs_pos:
         i_array.append(i.id)
     return i_array
+
 def int_arr_to_name(U):
     list_nome = sorted(U)
     nome = ''.join(list(map(str,list_nome)))
     return nome
-def tree_to_afd(tree,inputs):
-    initial_state = to_name(tree.firstpos())
-    
-    automato = Automaton(initial_state,['a','b'])
+
+def tree_to_afd(tree : Node,inputs : list[str],token):
+    initial_state = int_arr_to_name(get_firtpos_int_array(tree.firstpos()))
+
+    automato = Automaton(initial_state,inputs)
     
     S = [get_firtpos_int_array(tree.firstpos())]
   
@@ -211,16 +219,20 @@ def tree_to_afd(tree,inputs):
         last = S.pop()
         for i in automato.alfabet:
             U = make_union(i,last,tree.char_num(),tree.follow_pos_table())
-            if not is_in(U,automato,S):
-               S.append(U)
+            if len(U) > 1:
+                if not is_in(U,automato,S):
+                    S.append(U)
 
-            estado_name = int_arr_to_name(last)
-            if estado_name in automato.transition_table.keys():
-                automato.transition_table[estado_name].transitions[i]=int_arr_to_name(U)
-            else:
-                automato.transition_table[estado_name] = State(estado_name,{i:int_arr_to_name(U)})
+                estado_name = int_arr_to_name(last)
+                if estado_name in automato.transition_table.keys():
+                    automato.transition_table[estado_name].transitions[i]=int_arr_to_name(U)
+                else:
+                    if tree.accept_number() in last:
+                        automato.transition_table[estado_name] = State(estado_name,{i:int_arr_to_name(U)},token)
+                    else:
+                        automato.transition_table[estado_name] = State(estado_name,{i:int_arr_to_name(U)})
 
-      
+
     return automato
 
 
@@ -229,20 +241,13 @@ def tree_to_afd(tree,inputs):
 if __name__ == '__main__':
     obj = ER_parser()
     obj.parseEr(os.path.join('ER','er_teste.txt'))
-
     automata_conv = ER_to_automata()
-
-    for key in obj.definitions:
-        tree = automata_conv.Er_to_tree(obj.definitions[key][::-1])
-        tree = Node('o',tree,Node('#'))
+    print(obj.definitions)
+    for token in obj.definitions:
+        tree = automata_conv.Er_to_tree(obj.definitions[token][::-1])
+        tree = Node('.',tree,Node('#'))
         tree.calculateFollowpos()
-        print('-'*30)
         table = tree.tree_to_table()
-        tree.show_leafs()
-        
-        print(tree.char_num())
-        auto = tree_to_afd(tree,['a,b'])
-        print()
-        print(auto.transition_table)
+        auto = tree_to_afd(tree,['a','b','c'],token)
+        print(auto.initial_state_name)
         auto.print()
-        #auto.getToken('')
