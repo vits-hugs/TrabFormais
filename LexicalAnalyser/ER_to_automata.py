@@ -46,6 +46,11 @@ class Node:
 
         return dic
 
+    def follow_pos_table(self):
+        dic = dict()
+        for leaf in self.get_leafs():
+            dic[str(leaf.id)] = [i.id for i in list(leaf.followpos)]
+        return dic
     def char_num(self):
         dic =dict()
         for i in tree.get_leafs():
@@ -168,40 +173,54 @@ def to_name(set_of):
     nome = ''.join(list(map(str,list_nome)))
     return nome
 
-def make_union(char,S,char_to):
-    ret = set()
-    for i in S:
-        for x in char_to[char] :
-            if i == x:
-                ret = ret.union(i)
+def make_union(char,S,char_to,follow_pos_table):
+    ret = []
+    for ch in char_to[char] :
+        if ch in S:
+            for y in follow_pos_table[str(ch)]:
+                ret.append(y)
     return ret
 
 def is_in(U,automato,S):
-    u = to_name(U)
+    u = int_arr_to_name(U)
     if u in automato.transition_table.keys():
         return True
     for i in S:
-        if u == to_name(i):
+        if u ==''.join(list(map(str,sorted(i)))):
             return True
     return False
 
 
-def get_firtpos():
-
+def get_firtpos_int_array(firs_pos):
+    i_array = []
+    for i in firs_pos:
+        i_array.append(i.id)
+    return i_array
+def int_arr_to_name(U):
+    list_nome = sorted(U)
+    nome = ''.join(list(map(str,list_nome)))
+    return nome
 def tree_to_afd(tree,inputs):
     initial_state = to_name(tree.firstpos())
     
     automato = Automaton(initial_state,['a','b'])
     
-    S = [tree.firstpos()]
+    S = [get_firtpos_int_array(tree.firstpos())]
   
     while len(S) > 0:
-        S.pop()
+        last = S.pop()
         for i in automato.alfabet:
-            U = make_union(i,S,tree.char_num())
+            U = make_union(i,last,tree.char_num(),tree.follow_pos_table())
             if not is_in(U,automato,S):
                S.append(U)
-            automato.transition_table[to_name(U)] = (i,State(to_name(U)))
+
+            estado_name = int_arr_to_name(last)
+            if estado_name in automato.transition_table.keys():
+                automato.transition_table[estado_name].transitions[i]=int_arr_to_name(U)
+            else:
+                automato.transition_table[estado_name] = State(estado_name,{i:int_arr_to_name(U)})
+
+      
     return automato
 
 
@@ -225,3 +244,5 @@ if __name__ == '__main__':
         auto = tree_to_afd(tree,['a,b'])
         print()
         print(auto.transition_table)
+        auto.print()
+        #auto.getToken('')
