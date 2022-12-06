@@ -1,0 +1,2 @@
+pastel: (a|b)*.a.b.b
+cu: a.b.b
