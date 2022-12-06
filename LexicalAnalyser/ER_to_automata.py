@@ -2,7 +2,7 @@ import os
 import string
 from ER_reader import ER_parser
 from Automaton import Automaton,State
-
+from PriorityTable import PriorityTable
 
 ESPECIAL_CARACTERS = ['?','*','+','.','|']
 global id
@@ -18,6 +18,7 @@ class Node:
         if type not in ESPECIAL_CARACTERS:
             self.id = id
             id+=1
+
     def show_leafs(self):
         if self.node_left == None and self.node_right == None:
             print(self)
@@ -41,25 +42,25 @@ class Node:
 
     def tree_to_table(self):
         dic = dict()
-        for leaf in self.get_leafs():
+        for leaf in self.get_leafs([]):
             dic[leaf.type+str(leaf.id)] = [i.id for i in list(leaf.followpos)]
 
         return dic
 
     def follow_pos_table(self):
         dic = dict()
-        for leaf in self.get_leafs():
+        for leaf in self.get_leafs([]):
            dic[str(leaf.id)] = [i.id for i in list(leaf.followpos)]
         return dic
         #return {'1':[2],'2':[5],'3':[4],'4':[5],'5':[]}
     
     def accept_number(self):
-        return max(node.id for node in self.get_leafs())
+        return max(node.id for node in self.get_leafs([]))
 
 
     def correspondence_table(self):
         dic =dict()
-        for i in self.get_leafs():
+        for i in self.get_leafs([]):
             if i.type in dic.keys():
                 dic[i.type].append(i.id)
             else:
@@ -134,8 +135,6 @@ class Node:
      
 
 class ER_to_Tree:
-
-
     def __init__(self):
         pass
 
@@ -157,7 +156,6 @@ class ER_to_Tree:
         return left,right        
 
     def Er_to_tree(self,regex : str):
-        #print(regex)
         regex = regex.strip()
         if len(regex) == 1:
             return Node(regex)
@@ -182,18 +180,6 @@ class ER_to_Tree:
 
 class ER_to_automata:
 
-    def make_union(self,char,S,char_to,follow_pos_table):
-        ret = []
-        if char not in char_to.keys():
-            return ret
-        for ch in char_to[char] :
-            if ch in S:
-                for y in follow_pos_table[str(ch)]:
-                    ret.append(y)
-        return ret
-
-        #return list(set(ret))
-
     def is_in(self,U,automato,S):
         u = self.int_arr_to_name(U)
         if u in automato.transition_table.keys():
@@ -215,34 +201,7 @@ class ER_to_automata:
         nome = ''.join(list(map(str,list_nome)))
         return nome
 
-    def tree_to_afd(self,tree : Node,inputs : list[str],token):
-        initial_state = self.int_arr_to_name(self.get_firtpos_int_array(tree.firstpos()))
-
-        automato = Automaton(initial_state,inputs)
-        
-        S = [self.get_firtpos_int_array(tree.firstpos())]
-        used = []
-        while len(S) > 0:
-            last = S.pop()
-            for i in automato.alfabet:
-                U = self.make_union(i,last,tree.correspondence_table(),tree.follow_pos_table())
-                if len(U) > 1:
-                    if not self.is_in(U,automato,S):
-                            S.append(U)
-
-                    estado_name = self.int_arr_to_name(last)
-                    if estado_name in automato.transition_table.keys():
-                            automato.transition_table[estado_name].transitions[i]=self.int_arr_to_name(U)
-                    else:
-                        if tree.accept_number() in last:
-                            automato.transition_table[estado_name] = State(estado_name,{i:self.int_arr_to_name(U)},token)
-                        else:
-                            automato.transition_table[estado_name] = State(estado_name,{i:self.int_arr_to_name(U)})
-
-
-        return automato
-
-    def make_union2(self,S,tree:Node ,char): # União do followpos dos estados em S, que estão em a
+    def make_union(self,S,tree:Node ,char): # União do followpos dos estados em S, que estão em a
         correspondenc_table = tree.char_correspondence(char)
         follow_pos_table = tree.follow_pos_table()
         U = set()
@@ -265,9 +224,9 @@ class ER_to_automata:
                 return True
         return False
 
-    def tree_to_afd_1(self,tree : Node,alphabet: list[str],token):
+    def tree_to_afd(self,tree : Node,alphabet: list[str],token):
         initial_state = self.int_arr_to_name(self.get_firtpos_int_array(tree.firstpos()))
-        automato = Automaton(initial_state,alphabet)
+        automato = Automaton(initial_state,alphabet,{})
         Dstates = [self.get_firtpos_int_array(tree.firstpos())]
         usedDstates = []
         while len(Dstates) > 0:
@@ -275,7 +234,7 @@ class ER_to_automata:
            usedDstates.append(S)
            
            for char in alphabet:
-                U = self.make_union2(S,tree,char) 
+                U = self.make_union(S,tree,char) 
                 if U:
                     U_name = self.array_to_state_name(list(U))
                     if not self.is_in_Dstates(U_name,Dstates,usedDstates): 
@@ -294,32 +253,33 @@ class ER_to_automata:
                         if tree.accept_number() in U:
                             automato.transition_table[U_name] = State(U_name,{},token)
 
-        automato.printAsAFD()
         return automato
 
     def get_automato(self,obj,token,alphabet=list(string.ascii_lowercase)):
         automata_conv = ER_to_Tree()
         tree = automata_conv.Er_to_tree(obj.definitions[token][::-1])
         tree = Node('.',tree,Node('#'))
-        print(tree)
         tree.calculateFollowpos()
-        auto = self.tree_to_afd_1(tree,alphabet,token)
-        #print(auto.initial_state_name)
-        #auto.printAsAFD()
+        return self.tree_to_afd(tree,alphabet,token)
 
-    def automata_from_file(self,file):
+
+    def getAutomata(self,file,alphabet=list(string.ascii_lowercase)):
         global id
-        obj = ER_parser()
-        obj.parseEr(file)
+        parser = ER_parser()
+        parser.parseEr(file)
         automato_List = []
 
-        for token in obj.definitions:
+        for token in parser.definitions:
             id = 1
-            automato_List.append(self.get_automato(obj,token,['a','b','c','d']))
-        return automato_List,obj.priority
+            automato_List.append(self.get_automato(parser,token,alphabet))
+        return automato_List,PriorityTable(parser.priority)
 
 if __name__ == '__main__':
     
-    ER_to_automata().automata_from_file(os.path.join('ER','er_teste.txt'))
-   
-   
+    list,priority =ER_to_automata().getAutomata(os.path.join('ER','er_teste.txt'))
+
+    #Ordem de prioridade é definida pela ordem de escrita
+    #no arquivo
+    #os automatos estão nessa ordem
+    for automaton in list:
+        automaton.printAsAFD()
