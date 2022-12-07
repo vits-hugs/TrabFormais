@@ -52,3 +52,7 @@ class LexicalAnalyserGenerator:
         complete_AFD = AutomataManager.getDeterministic(complete_AFND, priority_table)
 
         return LexicalAnalyser(complete_AFD)
+
+if __name__ == '__main__':
+    
+    algo = LexicalAnalyserGenerator().getLexicalAnalyser('ER/er_teste.txt')

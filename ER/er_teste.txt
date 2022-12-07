@@ -1,2 +1,4 @@
-pastel: (a|b)*.a.b.b
-cu: a.b.b
+token_1: ((ab)*|ab)c
+token_2: cd
+token_3: (a|b)*lm
+token_4: a?d?
