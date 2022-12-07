@@ -56,7 +56,6 @@ class ContextFreeGrammar:
     def __eliminateImidiateLeftRecursion__(self, head):
         alphas = []
         betas = []
-        print(self.__productions[head])
         for production in self.__productions[head]:
             if (production[0] == head):
                 if (not production[1:]):
@@ -145,16 +144,6 @@ class ContextFreeGrammar:
             else:
                 prev_dict_len = curr_dict_len
 
-    #Grammar must be non-left-recursive
-    def first(self, sequence: list):
-        first_set = set()
-        for symbol in sequence:
-            symbol_first = self.first_dict[symbol]
-            first_set = first_set.union(symbol_first.difference(set("&")))
-            if ("&" not in symbol_first):
-                return first_set
-        return first_set.union("&")
-
     def __follow__(self):
         follow_dict = {self.initial_symbol: "$"}
         for non_terminal in self.non_terminals.remove(self.initial_symbol):
@@ -179,6 +168,16 @@ class ContextFreeGrammar:
                 return follow_dict
             else:
                 prev_dict_len = curr_dict_len
+
+    #Grammar must be non-left-recursive
+    def first(self, sequence: list):
+        first_set = set()
+        for symbol in sequence:
+            symbol_first = self.first_dict[symbol]
+            first_set = first_set.union(symbol_first.difference(set("&")))
+            if ("&" not in symbol_first):
+                return first_set
+        return first_set.union("&")
 
     def follow(self, non_terminal):
         return self.follow_dict[non_terminal]
@@ -413,7 +412,6 @@ class LRParser:
             else:
                 pass #error
             
-
 class LexicalAnalyzerGenerator:
     lexemme_automaton: DeterministicAutomaton
     lookahead_automaton: DeterministicAutomaton
