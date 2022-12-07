@@ -19,7 +19,6 @@ class ContextFreeGrammar:
     alphabet: set
     initial_symbol: str
     non_terminals: set
-    productions: dict
     first_dict: dict
     follow_dict: dict
     '''
@@ -32,37 +31,88 @@ class ContextFreeGrammar:
         self.alphabet = alphabet
         self.initial_symbol = initial_symbol
         self.non_terminals = non_terminals
-        self.productions = {}
+        self.__productions = {}
+        self.ordered_productions = []
         self.first_dict = None
         self.follow_dict = None
 
     def __orderProductions__(self):
         self.ordered_productions = []
-        for head, body in self.productions.items():
-            self.ordered_productions.insert(0, (head, body))
+        for head in self.non_terminals:
+            if (head == self.initial_symbol):
+                self.ordered_productions.insert(0, (head, self.__productions[head][0] if self.__productions[head] else []))
+            else:
+                for body in self.__productions[head]:
+                    self.ordered_productions.append((head, body))
 
     def __augment__(self):
-        initial_productions = self.productions[self.initial_symbol]
+        initial_productions = self.__productions[self.initial_symbol]
         if (len(initial_productions) != 1 or len(initial_productions[0]) != 1):
-            initial_symbol = self.initial_symbol + "`"
-            self.productions[initial_symbol] = [[self.initial_symbol]]
+            initial_symbol = "*" + self.initial_symbol
+            self.non_terminals.add(initial_symbol)
+            self.__productions[initial_symbol] = [[self.initial_symbol]]
             self.initial_symbol = initial_symbol
 
+    def __eliminateImidiateLeftRecursion__(self, head):
+        alphas = []
+        betas = []
+        print(self.__productions[head])
+        for production in self.__productions[head]:
+            if (production[0] == head):
+                if (not production[1:]):
+                    self.__productions[head].remove(production)
+                    return
+                alphas.append(production[1:])
+            else:
+                betas.append(production)
+        if (not alphas):
+            return
+        new_symbol = head + "`"
+        head_productions = []
+        for beta in betas:
+            head_productions.append(beta + [new_symbol])
+        new_symbol_productions = [["&"]]
+        for alpha in alphas:
+            new_symbol_productions.append(alpha + [new_symbol])
+        self.non_terminals.add(new_symbol)
+        self.__productions[head] = head_productions
+        self.__productions[new_symbol] = new_symbol_productions
+
+    def __eliminateLeftRecursion__(self):
+        non_terminals = list(self.non_terminals)
+        for i in range(len(non_terminals)):
+            head = non_terminals[i]
+            new_productions = []
+            for production_body in self.__productions[head]:
+                if (production_body[0] == head or production_body[0] not in self.non_terminals or production_body[0] not in non_terminals[:i]):
+                    new_productions.append(production_body)
+                    continue
+                for handle in non_terminals[:i]:
+                    if (handle == production_body[0]):
+                        gamma = production_body[1:]
+                        for delta in self.__productions[handle]:
+                            new_productions.append(delta + gamma)
+            self.__productions[head] = new_productions
+            self.__eliminateImidiateLeftRecursion__(head)
+
+    def initialize(self):
+        print(self.__productions)
+        self.__eliminateLeftRecursion__()
+        self.__augment__()
+        self.__orderProductions__()
+        self.first_dict = self.__first__()
+        #self.follow_dict = self.__follow__()
+
     def addProduction(self, head: str, body: list):
-        if (head not in self.productions.keys()):
-            self.productions[head] = []
-        self.productions[head].append(body)
+        if (head not in self.__productions.keys()):
+            self.__productions[head] = []
+        self.__productions[head].append(body)
+        self.ordered_productions.append((head, body))
 
     def getInitialItem(self):
         for i, production in enumerate(self.ordered_productions):
             if (production[0] is self.initial_symbol):
                 return (i, 0)
-
-    def initialize(self):
-        self.__augment__()
-        self.__ordered_productions__()
-        self.first_dict = self.__first__()
-        self.follow_dict = self.__follow__()
 
     def __dictLen__(self, d: dict):
         count = 0
@@ -79,7 +129,7 @@ class ContextFreeGrammar:
         while (True):
             for head in self.non_terminals:
                 first_set = set()
-                for production_body in self.productions[head]:
+                for production_body in self.__productions[head]:
                     if (production_body[0] == "&"):
                         first_set.add("&")
                     else:
@@ -396,6 +446,5 @@ if (__name__ == "__main__"):
     grammar.addProduction("T", ["F"])
     grammar.addProduction("F", ["(","E",")"])
     grammar.addProduction("F", ["id"])
-    grammar.__augment__()
-    grammar.__orderProductions__()
+    grammar.initialize()
     print(grammar.ordered_productions)
