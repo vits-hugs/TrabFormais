@@ -25,7 +25,6 @@ class ER_parser:
         start = text.find('[')
         end = text.find(']')
         expression = text[start+1:end]
-        print(expression)
         for i in range(len(expression)):
             if expression[i] == '-':
                 if expression[i-1].islower():
@@ -69,7 +68,6 @@ class ER_parser:
                     definition[1] = self.solve_exp(definition[1])
                 definition[1] = self.put_concatenate_operator(definition[1].strip())
                 self.definitions[definition[0]] = definition[1].strip()
-        print(self.definitions)
     
 
 

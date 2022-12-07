@@ -4,6 +4,7 @@ from PriorityTable import PriorityTable
 from AutomataManager import AutomataManager
 from AFD import AFD
 from AFND import AFND
+import os
 
 WHITESPACES = {'\n', ' ', '\t'}
 
@@ -40,16 +41,29 @@ class LexicalAnalyser():
 class LexicalAnalyserGenerator:
     
     @staticmethod
-    def getLexicalAnalyser(ERs):
-        automata, priority_table = ER_to_automata.getAutomata(ERs)
-        automata: list[AFD]
-        priority_table: PriorityTable
+    def getLexicalAnalyser(path_to_ER_file):
+        automata, priority_table = ER_to_automata().getAutomata(path_to_ER_file)
+
+        print("Fresquinhos")
+        for AFD in automata:
+            AFD.print()
 
         for index, afd in enumerate(automata):
             automata[index] = AutomataManager.getNondeterministic(afd)
 
+        print("AFNDzados")
+        for AFD in automata:
+            AFD.print()
+
         complete_AFND = AutomataManager.joinThroughEpsilon(automata)
+
+        print("AFND completo após união")
+        complete_AFND.print()
+
         complete_AFD = AutomataManager.getDeterministic(complete_AFND, priority_table)
+
+        print("AFD completo, determinizado")
+        complete_AFND.print()
 
         return LexicalAnalyser(complete_AFD)
 
