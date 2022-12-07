@@ -63,7 +63,7 @@ class LexicalAnalyserGenerator:
         complete_AFD = AutomataManager.getDeterministic(complete_AFND, priority_table)
 
         print("AFD completo, determinizado")
-        complete_AFND.print()
+        complete_AFD.print()
 
         return LexicalAnalyser(complete_AFD)
 

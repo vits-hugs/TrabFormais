@@ -1,7 +1,7 @@
 from LexicalAnalyserGenerator import LexicalAnalyserGenerator
 import os
 
-LA = LexicalAnalyserGenerator.getLexicalAnalyser(os.path.join('ER', 'er_teste.txt'))
+LA = LexicalAnalyserGenerator.getLexicalAnalyser(os.path.join('ER', 'er_1.txt'))
 
 tokens, symbolList = LA.exec("abc blm abbblm cd d")
 

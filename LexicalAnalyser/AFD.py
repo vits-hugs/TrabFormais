@@ -10,7 +10,7 @@ class D_State:
         self.token_type = token_type
 
     def __getitem__(self, key):
-        return self.transitions.get(key, tuple())
+        return self.transitions.get(key, None)
 
 class AFD:
     def __init__(self, initial_state_name: str, alfabet: list[str], transition_table: dict[str, D_State] = {}):

@@ -88,9 +88,10 @@ class AutomataManager:
 
     @staticmethod
     def getNondeterministic(afd: AFD):
-        new_AFD = AFD(afd.initial_state_name, afd.alfabet, afd.transition_table)
+        new_AFD = AFND(afd.initial_state_name, afd.alfabet, afd.transition_table)
 
-        for state in afd.transition_table.values():
+        for key, state in new_AFD.transition_table.items():
+            new_AFD.transition_table[key] = N_State(state.name, state.transitions, state.token_type)
             for char, dest_state in state.transitions.items():
                 state.transitions[char] = {dest_state}
 
