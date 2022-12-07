@@ -62,14 +62,18 @@ class ER_parser:
                 definition[0] = definition[0].strip()
                 definition[1] = definition[1].strip()
                 self.priority.append(definition[0])
-                for key,value in self.definitions.items():
-                    definition[1] = definition[1].replace(key,value)
                 while ('[') in definition[1]:
                     definition[1] = self.solve_exp(definition[1])
                 definition[1] = self.put_concatenate_operator(definition[1].strip())
                 self.definitions[definition[0]] = definition[1].strip()
+        has_defined = True
+        while (has_defined):
+            has_defined = False
+            for key,value in self.definitions.items():
+                if key in definition[1]:
+                    has_defined = True
+                    definition[1] = definition[1].replace(key,value)
     
-
 
     def get_inner_parent(self,regex):
         pilha = []
