@@ -274,6 +274,7 @@ class ER_to_automata:
 
     def get_automato(self, obj, token, alphabet=list(string.ascii_lowercase)):
         automata_conv = ER_to_Tree()
+        obj.definitions # ver se regex faz sentido
         tree = automata_conv.Er_to_tree(obj.definitions[token][::-1])
         tree = Node('.', tree, Node('#'))
         # print(tree)

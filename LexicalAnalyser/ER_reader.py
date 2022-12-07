@@ -64,16 +64,22 @@ class ER_parser:
                 self.priority.append(definition[0])
                 while ('[') in definition[1]:
                     definition[1] = self.solve_exp(definition[1])
-                definition[1] = self.put_concatenate_operator(definition[1].strip())
+                
                 self.definitions[definition[0]] = definition[1].strip()
-        has_defined = True
+        
+        self.recursive_define()
+        for key,value in self.definitions.items():
+            self.definitions[key] = self.put_concatenate_operator(value.strip())
+
+    def recursive_define(self):
+        has_defined = True        
         while (has_defined):
             has_defined = False
             for key,value in self.definitions.items():
-                if key in definition[1]:
-                    has_defined = True
-                    definition[1] = definition[1].replace(key,value)
-    
+                for key_2,value_2 in self.definitions.items():
+                    if key in value_2:
+                        self.definitions[key_2] = value_2.replace(key,value)
+
 
     def get_inner_parent(self,regex):
         pilha = []
@@ -92,5 +98,5 @@ class ER_parser:
 if __name__ == '__main__':
     obj = ER_parser()
 
-    obj.parseEr(os.path.join('ER','teste_reader.txt'))
+    obj.parseEr(os.path.join('ER','er_1.txt'))
     #obj.definitions_to_automata()
