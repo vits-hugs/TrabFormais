@@ -238,8 +238,11 @@ class ER_to_automata:
 
     def array_to_state_name(self,array):
         list_nome = sorted(array)
-        nome = ''.join(list(map(str,list_nome)))
-        return nome
+        nome_id = ''.join(list(map(str,list_nome)))
+        if nome_id not in self.conf_estados.keys():
+            self.conf_estados[nome_id] = self.token+'_'+str(self.state_id)
+            self.state_id+=1
+        return self.conf_estados[nome_id]
 
     def is_in_Dstates(self,U_name,Dstates,usedDstates):
         for l_array in Dstates:
@@ -285,7 +288,7 @@ class ER_to_automata:
         automata_conv = ER_to_Tree()
         tree = automata_conv.Er_to_tree(obj.definitions[token][::-1])
         tree = Node('.',tree,Node('#'))
-        print(tree)
+        #print(tree)
         tree.calculateFollowpos()
         return self.tree_to_afd(tree,alphabet,token)
 
@@ -295,18 +298,20 @@ class ER_to_automata:
         parser = ER_parser()
         parser.parseEr(file)
         automato_List = []
-
         for token in parser.definitions:
             id = 1
+            self.conf_estados = dict()
+            self.state_id = 0
+            self.token = token
             automato_List.append(self.get_automato(parser,token,alphabet))
         return automato_List,PriorityTable(parser.priority)
 
 if __name__ == '__main__':
-    
-    list,priority =ER_to_automata().getAutomata(os.path.join('ER','er_teste.txt'))
+    for directory in os.listdir('ER'):
+        lista,priority =ER_to_automata().getAutomata(os.path.join('ER',directory))
 
     #Ordem de prioridade é definida pela ordem de escrita
     #no arquivo
     #os automatos estão nessa ordem
-    for automaton in list:
+    for automaton in lista:
         automaton.printAsAFD()

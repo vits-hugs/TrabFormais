@@ -50,4 +50,5 @@ class LexicalAnalyserGenerator:
         return LexicalAnalyser(complete_AFD)
 
 if __name__ == '__main__':
+    
     algo = LexicalAnalyserGenerator().getLexicalAnalyser('ER/er_teste.txt')

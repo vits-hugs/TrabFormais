@@ -1,0 +1,9 @@
+lowercase : [a-z]
+uppercase : [A-Z]
+digits : [0-9]
+limited: [2-5]
+middle: [b-d]
+letters: [d-xK-Y]
+two: [a-z][0-9]
+id_lower: lowercasedigits
+macro: uppercasedigits
