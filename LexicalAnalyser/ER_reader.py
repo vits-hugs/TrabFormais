@@ -49,7 +49,27 @@ class ER_parser:
         
         return text
 
-    def parseEr(self,file):
+    def parseEr_fromString(self,string):
+        Lines = string.splitlines()
+        for line in Lines:
+            line = line.replace('\n','')
+            if line != "":
+                definition = line.split(":")
+                definition[0] = definition[0].strip()
+                definition[1] = definition[1].strip()
+                self.priority.append(definition[0])
+                while ('[') in definition[1]:
+                    definition[1] = self.solve_exp(definition[1])
+                
+                self.definitions[definition[0]] = definition[1].strip()
+        
+        self.recursive_define()
+        for key,value in self.definitions.items():
+            self.definitions[key] = self.put_concatenate_operator(value.strip())
+
+
+
+    def parseEr_fromFile(self,text):
 
         file = open(file,'r')
         Lines = file.readlines()
@@ -98,5 +118,5 @@ class ER_parser:
 if __name__ == '__main__':
     obj = ER_parser()
 
-    obj.parseEr(os.path.join('ER','er_1.txt'))
+    obj.parseEr_from_file(os.path.join('ER','er_1.txt'))
     #obj.definitions_to_automata()

@@ -1,9 +1,13 @@
 from LexicalAnalyserGenerator import LexicalAnalyserGenerator
 import os
 
-LA = LexicalAnalyserGenerator.getLexicalAnalyser(os.path.join('ER', 'er_1.txt'))
+file = open(os.path.join('ER', 'er_1.txt'))
+string = file.read()
+print(string)
+file.close()
+LA = LexicalAnalyserGenerator.getLexicalAnalyser(string)
 
-tokens, symbolList = LA.exec("abc blm abbblm cd d 2 ad3")
+tokens, symbolList = LA.exec("abc dk")
 
 print("Tokens: ", tokens)
 

@@ -281,10 +281,10 @@ class ER_to_automata:
         tree.calculateFollowpos()
         return self.tree_to_afd(tree, alphabet, token)
 
-    def getAutomata(self, file, alphabet=list(string.ascii_letters+string.digits)):
+    def getAutomata_fromFile(self, file, alphabet=list(string.ascii_letters+string.digits)):
         global id
         parser = ER_parser()
-        parser.parseEr(file)
+        parser.parseEr_fromFile(file)
         automato_List: list[AFD] = []
         for token in parser.definitions:
             id = 1
@@ -294,10 +294,21 @@ class ER_to_automata:
             automato_List.append(self.get_automato(parser, token, alphabet))
         return automato_List, PriorityTable(parser.priority)
 
-
+    def getAutomata(self, string, alphabet=list(string.ascii_letters+string.digits)):
+        global id
+        parser = ER_parser()
+        parser.parseEr_fromString(string)
+        automato_List: list[AFD] = []
+        for token in parser.definitions:
+            id = 1
+            self.conf_estados = dict()
+            self.state_id = 0
+            self.token = token
+            automato_List.append(self.get_automato(parser, token, alphabet))
+        return automato_List, PriorityTable(parser.priority)
 if __name__ == '__main__':
     for directory in os.listdir('ER'):
-        lista, priority = ER_to_automata().getAutomata(os.path.join('ER', directory))
+        lista, priority = ER_to_automata().getAutomata_fromFile(os.path.join('ER', directory))
 
     # Ordem de prioridade é definida pela ordem de escrita
     # no arquivo

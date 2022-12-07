@@ -8,5 +8,7 @@ teste_prof: (a|b)*abb
 nome: upperlower*
 variavel: letter(letter|number)*
 matricula: number*
+ano: numbernumbernumbernumber
+
 
 

@@ -41,8 +41,8 @@ class LexicalAnalyser():
 class LexicalAnalyserGenerator:
     
     @staticmethod
-    def getLexicalAnalyser(path_to_ER_file):
-        automata, priority_table = ER_to_automata().getAutomata(path_to_ER_file)
+    def getLexicalAnalyser(string):
+        automata, priority_table = ER_to_automata().getAutomata(string)
 
         print("Fresquinhos")
         for AFD in automata:
