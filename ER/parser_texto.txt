@@ -10,5 +10,6 @@ altura_em_cm: [0-2]numbercm
 teste_prof: (a|b)*abb
 nome: upperlower*
 palavra: letter(letter|number)*
+virgula: ,
 
 

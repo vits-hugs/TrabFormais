@@ -12,6 +12,8 @@ class ER_parser:
         i = 0
         while True:
             if text[i] not in ['|','.','(']:
+                if i >= len(text)-1:
+                    break
                 if text[i+1] not in (self.SYMBOLS+[')']):
                     text = text[:i+1]+'.'+text[i+1:]
                     
