@@ -10,7 +10,7 @@ class SymbolTableEntry:
 class SymbolTable:
 
     def __init__(self):
-        self.table: dict = {}
+        self.table: dict[str, SymbolTableEntry] = {}
 
     def __getitem__(self, key):
         return self.table[key]
@@ -20,4 +20,4 @@ class SymbolTable:
 
     def print(self):
         for key, value in self.table.items():
-            print(key + ': ' + str(value))
+            print(key.ljust(10), '|', "token_type:", str(value.token_type).ljust(10), 'lexeme:', str(value.lexeme).ljust(10), 'lexemeBegin:', str(value.lexemeBegin).ljust(10), 'lexemeEnd:', str(value.lexemeEnd))
