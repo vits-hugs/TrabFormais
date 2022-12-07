@@ -30,6 +30,17 @@ class Node:
             if self.node_right:
                 self.node_right.show_leafs()
 
+    def get_alphabet(self,alphabet=set()):
+        if self.node_left == None and self.node_right == None:
+            alphabet.add(self.type)
+        else:
+            if self.node_left:
+                self.node_left.get_alphabet(alphabet)
+            if self.node_right:
+                self.node_right.get_alphabet(alphabet)
+        return alphabet
+
+
     def get_leafs(self, leafs=[]):
 
         if self.node_left == None and self.node_right == None:
@@ -61,7 +72,7 @@ class Node:
     def correspondence_table(self):
         dic = dict()
         for i in self.get_leafs([]):
-            if i.type in dic.keys():
+            if i.type in dic:
                 dic[i.type].append(i.id)
             else:
                 dic[i.type] = [i.id]
@@ -69,7 +80,7 @@ class Node:
 
     def char_correspondence(self, char):
         dic = self.correspondence_table()
-        if char not in dic.keys():
+        if char not in dic:
             return []
         return dic[char]
 
@@ -202,7 +213,7 @@ class ER_to_automata:
 
     def is_in(self, U, automato, S):
         u = self.int_arr_to_name(U)
-        if u in automato.transition_table.keys():
+        if u in automato.transition_table:
             return True
         for i in S:
             if u == ''.join(list(map(str, sorted(i)))):
@@ -227,7 +238,7 @@ class ER_to_automata:
     def array_to_state_name(self, array):
         list_nome = sorted(array)
         nome_id = '-'.join(list(map(str, list_nome)))
-        if nome_id not in self.conf_estados.keys():
+        if nome_id not in self.conf_estados:
             self.conf_estados[nome_id] = self.token+'_'+str(self.state_id)
             self.state_id += 1
         return self.conf_estados[nome_id]
@@ -241,8 +252,10 @@ class ER_to_automata:
                 return True
         return False
 
-    def tree_to_afd(self, tree: Node, alphabet: list[str], token):
+    def tree_to_afd(self, tree: Node, token):
         initial_state = self.array_to_state_name(self.get_firtpos_int_array(tree.firstpos()))
+        alphabet = tree.get_alphabet(set())
+        alphabet.remove('#')
         automato = AFD(initial_state, alphabet, {})
         Dstates = [self.get_firtpos_int_array(tree.firstpos())]
         usedDstates = []
@@ -259,14 +272,14 @@ class ER_to_automata:
                     #print(f'{self.array_to_state_name(S)},{char}-> {U_name}')
                     # adiciona transição [S,a] -> U
                     estado_name = self.array_to_state_name(S)
-                    if estado_name in automato.transition_table.keys():
+                    if estado_name in automato.transition_table:
                         automato.transition_table[estado_name].transitions[char] = U_name
                     else:
                         if tree.accept_number() in S:
                             automato.transition_table[estado_name] = D_State(estado_name, {char: U_name}, token)
                         else:
                             automato.transition_table[estado_name] = D_State(estado_name, {char: U_name})
-                    if U_name not in automato.transition_table.keys():
+                    if U_name not in automato.transition_table:
                         if tree.accept_number() in U:
                             automato.transition_table[U_name] = D_State(U_name, {}, token)
 
@@ -279,28 +292,45 @@ class ER_to_automata:
         tree = Node('.', tree, Node('#'))
         # print(tree)
         tree.calculateFollowpos()
-        return self.tree_to_afd(tree, alphabet, token)
+        return self.tree_to_afd(tree,token)
 
-    def getAutomata(self, file, alphabet=list(string.ascii_letters+string.digits)):
+    def getAutomata_fromFile(self, file):
         global id
         parser = ER_parser()
-        parser.parseEr(file)
+        parser.parseEr_fromFile(file)
         automato_List: list[AFD] = []
         for token in parser.definitions:
             id = 1
             self.conf_estados = dict()
             self.state_id = 0
             self.token = token
-            automato_List.append(self.get_automato(parser, token, alphabet))
+            automato_List.append(self.get_automato(parser, token))
         return automato_List, PriorityTable(parser.priority)
 
+    def getAutomata(self, string):
+        global id
+        parser = ER_parser()
+        parser.parseEr_fromString(string)
+        automato_List: list[AFD] = []
+        for token in parser.definitions:
+            id = 1
+            self.conf_estados = dict()
+            self.state_id = 0
+            self.token = token
+            automato_List.append(self.get_automato(parser, token))
+        return automato_List, PriorityTable(parser.priority)
 
 if __name__ == '__main__':
     for directory in os.listdir('ER'):
-        lista, priority = ER_to_automata().getAutomata(os.path.join('ER', directory))
+        lista, priority = ER_to_automata().getAutomata_fromFile(os.path.join('ER', directory))
 
     # Ordem de prioridade é definida pela ordem de escrita
     # no arquivo
     # os automatos estão nessa ordem
-    for automaton in lista:
-        automaton.print()
+        print(directory)
+        for automaton in lista:
+            automaton.printAsAFD()
+        print('-'*90)
+        print()
+        print('-'*90)
+    
