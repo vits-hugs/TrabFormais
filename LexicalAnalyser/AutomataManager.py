@@ -99,6 +99,10 @@ class AutomataManager:
 
     @staticmethod
     def joinThroughEpsilon(automata: list[AFD]):
+        new_alfabet = set()
+        for afd in automata:
+            new_alfabet.update(afd.alfabet)
+
         new_transition_table: dict[str, N_State] = {}
         for automaton in automata:
             new_transition_table = new_transition_table | automaton.transition_table
@@ -115,7 +119,7 @@ class AutomataManager:
         initial_state = N_State('newNeverEverUsedStateName', initial_state_transitions, None)
 
         new_transition_table[initial_state.name] = initial_state
-        new_automaton = AFND(initial_state.name, automata[0].alfabet, new_transition_table)
+        new_automaton = AFND(initial_state.name, new_alfabet, new_transition_table)
 
         return new_automaton
 

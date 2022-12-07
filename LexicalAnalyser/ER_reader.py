@@ -1,5 +1,4 @@
 import os
-from Automaton import Automaton
 import string
 
 class ER_parser:
