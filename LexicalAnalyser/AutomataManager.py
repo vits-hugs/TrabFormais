@@ -13,7 +13,7 @@ class AutomataManager:
         while stack:
             t = stack.pop()
 
-            for u in transition_table[t]['epsilon']:
+            for u in transition_table[t]['&']:
                 if u not in e_closure:
                     e_closure.add(u)
                     stack.append(u)
@@ -110,7 +110,7 @@ class AutomataManager:
 
         # Instantiate the initial_state
         initial_state_transitions = {
-            'epsilon': initial_states
+            '&': initial_states
         }
         initial_state = N_State('newNeverEverUsedStateName', initial_state_transitions, None)
 
@@ -124,11 +124,11 @@ def test_getDeterministic():
     afnd_1 = AFND('q0', ['0', '1', '2'], {
         'q0': N_State('q0', {
             '0': {'q0', 'q2'},
-            'epsilon': {'q1'}
+            '&': {'q1'}
         }, 'for'),
         'q1': N_State('q1', {
             '1': {'q1'},
-            'epsilon': {'q2'}
+            '&': {'q2'}
         }, 'OP'),
         'q2': N_State('q2', {
             '2': {'q2'}
@@ -145,11 +145,11 @@ def test_joinThroughEpsilon():
     afnd_1 = AFND('q0_digit', ['0', '1', '2'], {
         'q0_digit': N_State('q0_digit', {
             '0': {'q0_digit', 'q2_digit'},
-            'epsilon': {'q1_digit'}
+            '&': {'q1_digit'}
         }, 'for'),
         'q1_digit': N_State('q1_digit', {
             '1': {'q1_digit'},
-            'epsilon': {'q2_digit'}
+            '&': {'q2_digit'}
         }, 'OP'),
         'q2_digit': N_State('q2_digit', {
             '2': {'q2_digit'}
@@ -159,11 +159,11 @@ def test_joinThroughEpsilon():
     afnd_2 = AFND('q0_letter', ['0', '1', '2'], {
         'q0_letter': N_State('q0_letter', {
             '0': {'q0_letter', 'q2_letter'},
-            'epsilon': {'q1__letter'}
+            '&': {'q1__letter'}
         }, 'for'),
         'q1__letter': N_State('q1__letter', {
             '1': {'q1__letter'},
-            'epsilon': {'q2_letter'}
+            '&': {'q2_letter'}
         }, 'OP'),
         'q2_letter': N_State('q2_letter', {
             '2': {'q2_letter'}
@@ -173,11 +173,11 @@ def test_joinThroughEpsilon():
     afnd_3 = AFND('q0_uranus', ['0', '1', '2'], {
         'q0_uranus': N_State('q0_uranus', {
             '0': {'q0_uranus', 'q2__uranus'},
-            'epsilon': {'q1__uranus'}
+            '&': {'q1__uranus'}
         }, 'for'),
         'q1__uranus': N_State('q1__uranus', {
             '1': {'q1__uranus'},
-            'epsilon': {'q2__uranus'}
+            '&': {'q2__uranus'}
         }, 'OP'),
         'q2__uranus': N_State('q2__uranus', {
             '2': {'q2__uranus'}
@@ -196,11 +196,11 @@ def test_getNondeterministic():
     afd_1 = AFND('q0', ['0', '1', '2'], {
         'q0': N_State('q0', {
             '0': 'q0',
-            'epsilon': 'q1'
+            '&': 'q1'
         }, 'for'),
         'q1': N_State('q1', {
             '1': 'q1',
-            'epsilon': 'q2'
+            '&': 'q2'
         }, 'OP'),
         'q2': N_State('q2', {
             '2': 'q2'

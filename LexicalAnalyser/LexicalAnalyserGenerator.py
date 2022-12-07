@@ -4,16 +4,16 @@ from PriorityTable import PriorityTable
 from AutomataManager import AutomataManager
 from AFD import AFD
 from AFND import AFND
+from Errors import CharNotInAlfabet, UnrecognizedToken
+import config
 import os
-
-WHITESPACES = {'\n', ' ', '\t'}
 
 class LexicalAnalyser():
     def __init__(self, automaton: AFD):
         self.automaton = automaton
         self.lexemeBegin = 0
         self.foward = 0
-    
+
     def reset(self):
         self.lexemeBegin = 0
         self.foward = 0
@@ -25,12 +25,14 @@ class LexicalAnalyser():
         symbolTable = SymbolTable()
 
         while self.lexemeBegin < len(string):
-            if string[self.lexemeBegin] in WHITESPACES:
+            if string[self.lexemeBegin] in config.WHITESPACES:
                 self.lexemeBegin += 1
                 continue
 
             tokenType, self.foward = self.automaton.getToken(string, self.lexemeBegin)
             lexeme = string[self.lexemeBegin:self.foward]
+            if tokenType == None:
+                raise UnrecognizedToken(lexeme, self.lexemeBegin, self.foward)
 
             tokenList.append((tokenType, lexeme))
             symbolTable.addEntry(lexeme, tokenType, lexeme, self.lexemeBegin, self.foward)
@@ -38,8 +40,9 @@ class LexicalAnalyser():
 
         return tokenList, symbolTable
 
+
 class LexicalAnalyserGenerator:
-    
+
     @staticmethod
     def getLexicalAnalyser(path_to_ER_file):
         automata, priority_table = ER_to_automata().getAutomata(path_to_ER_file)
@@ -67,6 +70,7 @@ class LexicalAnalyserGenerator:
 
         return LexicalAnalyser(complete_AFD)
 
+
 if __name__ == '__main__':
-    
+
     algo = LexicalAnalyserGenerator().getLexicalAnalyser('ER/er_teste.txt')

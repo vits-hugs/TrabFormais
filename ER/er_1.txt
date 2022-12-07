@@ -1,3 +1,3 @@
 id: letter(letter|digit)*
-digit: [0-7]
 letter: [a-zA-Z]
+digit: [0-7]

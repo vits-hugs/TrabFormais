@@ -49,8 +49,8 @@ class Automaton:
         while stack:
             t = stack.pop()
             if t in self.transition_table.keys():
-                if 'epsilon' in self.transition_table[t].transitions.keys():
-                    for u in self.transition_table[t]['epsilon']:
+                if '&' in self.transition_table[t].transitions.keys():
+                    for u in self.transition_table[t]['&']:
                         if u not in e_closure:
                             e_closure.add(u)
                             stack.append(u)
@@ -125,7 +125,7 @@ class Automaton:
 
         # Instantiate the initial_state
         initial_state_transitions = {
-            'epsilon': tuple(initial_state_epsilon_transitions)
+            '&': tuple(initial_state_epsilon_transitions)
         }
         initial_state = State(
             'newNeverEverUsedStateName(Really no one would use this string as a name to a state. At least not a well intentioned person', initial_state_transitions, None)
@@ -210,11 +210,11 @@ def test_joinThroughEpsilon():
     automaton_1 = Automaton('digit_q0', ['0', '1', '2'], {
         'digit_q0': State('digit_q0', {
             '0': ('digit_q0', 'digit_q2'),
-            'epsilon': ('digit_q1', )
+            '&': ('digit_q1', )
         }),
         'digit_q1': State('digit_q1', {
             '1': ('digit_q1', ),
-            'epsilon': ('digit_q2', )
+            '&': ('digit_q2', )
         }),
         'digit_q2': State('digit_q2', {
             '2': ('digit_q2', )
@@ -224,11 +224,11 @@ def test_joinThroughEpsilon():
     automaton_2 = Automaton('id_q0', ['0', '1', '2'], {
         'id_q0': State('id_q0', {
             '0': ('id_q0', 'id_q2'),
-            'epsilon': ('id_q1', )
+            '&': ('id_q1', )
         }),
         'id_q1': State('id_q1', {
             '1': ('id_q1', ),
-            'epsilon': ('id_q2', )
+            '&': ('id_q2', )
         }),
         'id_q2': State('id_q2', {
             '2': ('id_q2', )
@@ -238,11 +238,11 @@ def test_joinThroughEpsilon():
     automaton_3 = Automaton('letter_q0', ['0', '1', '2'], {
         'letter_q0': State('letter_q0', {
             '0': ('letter_q0', 'letter_q2'),
-            'epsilon': ('letter_q1', )
+            '&': ('letter_q1', )
         }),
         'letter_q1': State('letter_q1', {
             '1': ('letter_q1', ),
-            'epsilon': ('letter_q2', )
+            '&': ('letter_q2', )
         }),
         'letter_q2': State('letter_q2', {
             '2': ('letter_q2', )
@@ -263,11 +263,11 @@ def test_getDeterministic():
     automaton_1 = Automaton('q0', ['0', '1', '2'], {
         'q0': State('q0', {
             '0': ('q0', 'q2'),
-            'epsilon': ('q1', )
+            '&': ('q1', )
         }),
         'q1': State('q1', {
             '1': ('q1', ),
-            'epsilon': ('q2', )
+            '&': ('q2', )
         }, ('OP', 'OP')),
         'q2': State('q2', {
             '2': ('q2', )
@@ -277,11 +277,11 @@ def test_getDeterministic():
     automaton_2 = Automaton('q0', ['0', '1', '2'], {
         'q0': State('q0', {
             '0': ('q0', 'q2'),
-            'epsilon': ('q1', )
+            '&': ('q1', )
         }, 'for'),
         'q1': State('q1', {
             '1': ('q1', ),
-            'epsilon': ('q2', )
+            '&': ('q2', )
         }, 'OP'),
         'q2': State('q2', {
             '2': ('q2', )

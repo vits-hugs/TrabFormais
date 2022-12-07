@@ -9,11 +9,11 @@ class TestAutomaton(unittest.TestCase):
         transition_table = {
             'q0': State('q0', {
                 '0': ('q0', 'q2'),
-                'epsilon': ('q1', )
+                '&': ('q1', )
             }),
             'q1': State('q1', {
                 '1': ('q1', ),
-                'epsilon': ('q2', )
+                '&': ('q2', )
             }),
             'q2': State('q2', {
                 '2': ('q2', )
@@ -32,11 +32,11 @@ class TestAutomaton(unittest.TestCase):
         transition_table = {
             'q0': State('q0', {
                 '0': ('q0', 'q2'),
-                'epsilon': ('q1', )
+                '&': ('q1', )
             }),
             'q1': State('q1', {
                 '1': ('q1', ),
-                'epsilon': ('q2', )
+                '&': ('q2', )
             }),
             'q2': State('q2', {
                 '2': ('q2', )
