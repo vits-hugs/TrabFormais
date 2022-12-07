@@ -44,7 +44,7 @@ class ER_parser:
                     digits_list = list(string.digits)
                     new_list = digits_list[digits_list.index(expression[i-1]):digits_list.index(expression[i+1])+1]
                 
-                text = text.replace(f'[{expression}]',f'({"|".join(new_list)})*')
+                text = text.replace(f'[{expression}]',f'({"|".join(new_list)})')
                 break       
         
         return text
