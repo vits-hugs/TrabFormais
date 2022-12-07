@@ -1,0 +1,12 @@
+lower: [a-z]
+upper: [A-Z]
+letter: [a-zA-Z]
+number: [0-9]
+feio: Enzo
+tamanho_membro: [0-4]numbercm
+teste_prof: (a|b)*abb
+nome: upperlower*
+variavel: letter(letter|number)*
+matricula: number*
+
+
