@@ -69,7 +69,7 @@ class ER_parser:
 
 
 
-    def parseEr_fromFile(self,text):
+    def parseEr_fromFile(self,file):
 
         file = open(file,'r')
         Lines = file.readlines()
