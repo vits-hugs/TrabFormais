@@ -1,0 +1,1 @@
+WHITESPACES = {' ', '\n', '\t', '\r'} 
