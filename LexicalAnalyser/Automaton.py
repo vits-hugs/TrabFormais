@@ -2,6 +2,7 @@ import copy
 from PriorityTable import PriorityTable
 import sys
 
+
 class State:
     def __init__(self, name, transitions=dict(), token_type: str = None):
         self.name = name
@@ -10,6 +11,7 @@ class State:
 
     def __getitem__(self, key):
         return self.transitions.get(key, tuple())
+
 
 class Automaton:
     def __init__(self, initial_state_name: str | tuple[str], alfabet: list[str], transition_table: dict[str | tuple[str], State] = {}):
@@ -122,7 +124,8 @@ class Automaton:
 
         # Instantiate the initial_state
         initial_state_transitions = {
-            'epsilon': tuple(initial_state_epsilon_transitions)}
+            'epsilon': tuple(initial_state_epsilon_transitions)
+        }
         initial_state = State(
             'newNeverEverUsedStateName(Really no one would use this string as a name to a state. At least not a well intentioned person', initial_state_transitions, None)
 
@@ -132,7 +135,7 @@ class Automaton:
 
         return new_automaton
 
-    def printAsAFD(self, file = sys.stdout):
+    def printAsAFD(self, file=sys.stdout):
         # Número de estados
         print(len(self.transition_table))
 
@@ -160,8 +163,8 @@ class Automaton:
                 all_transitions.append((key, char, dest_state))
         for transition in all_transitions:
             print(transition[0], transition[1], transition[2], sep=',')
-    
-    def printAsAFND(self, file = sys.stdout):
+
+    def printAsAFND(self, file=sys.stdout):
         # Número de estados
         print(len(self.transition_table))
 
@@ -193,6 +196,13 @@ class Automaton:
                 for i in transition[2][:-1]:
                     print(i, end='-')
                 print(transition[2][-1])
+
+    def print(self):
+        for state_name, state in self.transition_table.items():
+            print(str(state_name).ljust(20), end=' ')
+            print("Transitions: ", str(state.transitions).ljust(70), end=' ')
+            print("Token: ", state.token_type)
+        print()
 
 def test_joinThroughEpsilon():
 
@@ -246,6 +256,7 @@ def test_joinThroughEpsilon():
 
     fuck_yeah.printAsAFD()
 
+
 def test_getDeterministic():
 
     automaton_1 = Automaton('q0', ['0', '1', '2'], {
@@ -275,7 +286,6 @@ def test_getDeterministic():
             '2': ('q2', )
         }, 'id')
     })
-
 
     automaton_1.printAsAFD()
     AFD_1 = automaton_1.getDeterministic()

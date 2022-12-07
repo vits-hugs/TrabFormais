@@ -1,12 +1,14 @@
 from ER_to_automata import ER_to_automata
-from Automaton import Automaton, State
-from SymbolTable import SymbolTable, SymbolTableEntry
+from SymbolTable import SymbolTable
 from PriorityTable import PriorityTable
+from AutomataManager import AutomataManager
+from AFD import AFD
+from AFND import AFND
 
 WHITESPACES = {'\n', ' ', '\t'}
 
 class LexicalAnalyser():
-    def __init__(self, automaton: Automaton):
+    def __init__(self, automaton: AFD):
         self.automaton = automaton
         self.lexemeBegin = 0
         self.foward = 0
@@ -40,11 +42,13 @@ class LexicalAnalyserGenerator:
     @staticmethod
     def getLexicalAnalyser(ERs):
         automata, priority_table = ER_to_automata.getAutomata(ERs)
-        automata: list[Automaton]
+        automata: list[AFD]
         priority_table: PriorityTable
 
-        automata_1 = automata.pop(0)
-        complete_AFND = automata_1.joinThroughEpsilon(automata)
-        complete_AFD = complete_AFND.getDeterministic(priority_table)
+        for index, afd in enumerate(automata):
+            automata[index] = AutomataManager.getNondeterministic(afd)
+
+        complete_AFND = AutomataManager.joinThroughEpsilon(automata)
+        complete_AFD = AutomataManager.getDeterministic(complete_AFND, priority_table)
 
         return LexicalAnalyser(complete_AFD)
