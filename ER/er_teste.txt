@@ -1,4 +1,0 @@
-token_1: ((ab)*|ab)c
-token_2: cd
-token_3: (a|b)*lm
-token_4: c?d?

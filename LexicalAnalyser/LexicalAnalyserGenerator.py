@@ -1,13 +1,6 @@
-from ER_to_automata import ER_to_automata
-from SymbolTable import SymbolTable
-from PriorityTable import PriorityTable
-from AutomataManager import AutomataManager
-from AFD import AFD
-from AFND import AFND
-from LexicalAnalyser import LexicalAnalyser
-from Errors import CharNotInAlfabet, UnrecognizedToken
-import config
-import os
+from LexicalAnalyser.ER_to_automata import ER_to_automata
+from LexicalAnalyser.AutomataManager import AutomataManager
+from LexicalAnalyser.LexicalAnalyser import LexicalAnalyser
 
 class LexicalAnalyserGenerator:
 
@@ -35,9 +28,4 @@ class LexicalAnalyserGenerator:
         complete_AFD.print()
         print()
 
-        return LexicalAnalyser(complete_AFD),set(priority_table.table.keys())
-
-
-if __name__ == '__main__':
-
-    algo = LexicalAnalyserGenerator().getLexicalAnalyser('ER/er_teste.txt')
+        return LexicalAnalyser(complete_AFD)

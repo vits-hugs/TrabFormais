@@ -1,4 +1,4 @@
-import ContextFreeGrammar
+from SyntaticalAnalyser.ContextFreeGrammar import ContextFreeGrammar
 
 class LRParser:
     #symbol_table: SymbolTable

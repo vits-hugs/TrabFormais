@@ -1,4 +1,0 @@
-sem : abb
-sem_paren: (abb)*(bdd)
-operador: a*c
-operador_paren: (a|b)*bb

@@ -1,6 +1,6 @@
-from AFD import AFD, D_State
-from AFND import AFND, N_State
-from PriorityTable import PriorityTable
+from LexicalAnalyser.AFD import AFD, D_State
+from LexicalAnalyser.AFND import AFND, N_State
+from LexicalAnalyser.PriorityTable import PriorityTable
 from copy import copy
 
 
@@ -116,104 +116,9 @@ class AutomataManager:
         initial_state_transitions = {
             '&': initial_states
         }
-        initial_state = N_State('newNeverEverUsedStateName', initial_state_transitions, None)
+        initial_state = N_State('Initial_State', initial_state_transitions, None)
 
         new_transition_table[initial_state.name] = initial_state
         new_automaton = AFND(initial_state.name, new_alfabet, new_transition_table)
 
         return new_automaton
-
-def test_getDeterministic():
-
-    afnd_1 = AFND('q0', ['0', '1', '2'], {
-        'q0': N_State('q0', {
-            '0': {'q0', 'q2'},
-            '&': {'q1'}
-        }, 'for'),
-        'q1': N_State('q1', {
-            '1': {'q1'},
-            '&': {'q2'}
-        }, 'OP'),
-        'q2': N_State('q2', {
-            '2': {'q2'}
-        }, 'id')
-    })
-
-    afnd_1.print()
-    priority_table_1 = PriorityTable(['for', 'OP', 'id'])
-    AFD_1 = AutomataManager.getDeterministic(afnd_1, priority_table_1)
-    AFD_1.print()
-
-def test_joinThroughEpsilon():
-
-    afnd_1 = AFND('q0_digit', ['0', '1', '2'], {
-        'q0_digit': N_State('q0_digit', {
-            '0': {'q0_digit', 'q2_digit'},
-            '&': {'q1_digit'}
-        }, 'for'),
-        'q1_digit': N_State('q1_digit', {
-            '1': {'q1_digit'},
-            '&': {'q2_digit'}
-        }, 'OP'),
-        'q2_digit': N_State('q2_digit', {
-            '2': {'q2_digit'}
-        }, 'id')
-    })
-
-    afnd_2 = AFND('q0_letter', ['0', '1', '2'], {
-        'q0_letter': N_State('q0_letter', {
-            '0': {'q0_letter', 'q2_letter'},
-            '&': {'q1__letter'}
-        }, 'for'),
-        'q1__letter': N_State('q1__letter', {
-            '1': {'q1__letter'},
-            '&': {'q2_letter'}
-        }, 'OP'),
-        'q2_letter': N_State('q2_letter', {
-            '2': {'q2_letter'}
-        }, 'id')
-    })
-
-    afnd_3 = AFND('q0_uranus', ['0', '1', '2'], {
-        'q0_uranus': N_State('q0_uranus', {
-            '0': {'q0_uranus', 'q2__uranus'},
-            '&': {'q1__uranus'}
-        }, 'for'),
-        'q1__uranus': N_State('q1__uranus', {
-            '1': {'q1__uranus'},
-            '&': {'q2__uranus'}
-        }, 'OP'),
-        'q2__uranus': N_State('q2__uranus', {
-            '2': {'q2__uranus'}
-        }, 'id')
-    })
-
-    fuck_yeah = AutomataManager.joinThroughEpsilon([afnd_1, afnd_2, afnd_3])
-
-    afnd_1.print()
-    afnd_2.print()
-    afnd_3.print()
-
-    fuck_yeah.print()
-
-def test_getNondeterministic():
-    afd_1 = AFND('q0', ['0', '1', '2'], {
-        'q0': N_State('q0', {
-            '0': 'q0',
-            '&': 'q1'
-        }, 'for'),
-        'q1': N_State('q1', {
-            '1': 'q1',
-            '&': 'q2'
-        }, 'OP'),
-        'q2': N_State('q2', {
-            '2': 'q2'
-        }, 'id')
-    })
-
-    afd_1.print()
-    afnd_1 = AutomataManager.getNondeterministic(afd_1)
-    afnd_1.print()
-
-if __name__ == '__main__':
-    test_getNondeterministic()

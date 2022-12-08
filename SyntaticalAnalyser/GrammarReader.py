@@ -1,7 +1,7 @@
+from SyntaticalAnalyser.ContextFreeGrammar import ContextFreeGrammar
 import os
-import ContextFreeGrammar
 
-class GramarReader:
+class GrammarReader:
 
     def __init__(self):
         pass
