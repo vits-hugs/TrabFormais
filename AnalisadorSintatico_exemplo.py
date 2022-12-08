@@ -9,6 +9,7 @@ import os
 ## ANALISADOR LÉXICO
 ################################################################
 
+# Escolha da ER e string de teste
 file_id = 2
 name_files = ['detecto_texto','exemplo_aula','exemplo_trabalho']
 
@@ -21,8 +22,10 @@ REs = ERs_file.read()
 print("Expressões regulares: \n", REs, sep='')
 ERs_file.close()
 
+# Geração do analisador léxico
 LA = LexicalAnalyserGenerator.getLexicalAnalyser(REs)
 
+# Uso do analisador
 tokens, symbolList = LA.exec(teste_string[file_id])
 
 print("Tokens: ")
