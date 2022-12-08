@@ -1,4 +1,3 @@
-import os
 import string
 
 class ER_parser:
@@ -114,10 +113,3 @@ class ER_parser:
                 break
         regex = regex[start:fim]
         return regex,start-1,fim+1
-
-
-if __name__ == '__main__':
-    obj = ER_parser()
-
-    obj.parseEr_from_file(os.path.join('ER','er_1.txt'))
-    #obj.definitions_to_automata()

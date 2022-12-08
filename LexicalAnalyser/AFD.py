@@ -1,8 +1,5 @@
-import copy
-from PriorityTable import PriorityTable
-import sys
-from Errors import CharNotInAlfabet, UnrecognizedToken
-import config
+from LexicalAnalyser.Errors import CharNotInAlfabet
+import LexicalAnalyser.config as config
 
 
 class D_State:
@@ -19,14 +16,6 @@ class AFD:
         self.initial_state_name = initial_state_name
         self.alfabet = alfabet
         self.transition_table = transition_table
-
-
-    def print(self):
-        for state_name, state in self.transition_table.items():
-            print(str(state_name).ljust(20), end=' ')
-            print("Transitions: ", str(state.transitions).ljust(70), end=' ')
-            print("Token: ", state.token_type)
-        print()
 
     def getToken(self, string, begin: int):
         reading_index = begin

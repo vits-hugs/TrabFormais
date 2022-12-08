@@ -1,8 +1,7 @@
-import os
+from LexicalAnalyser.ER_reader import ER_parser
+from LexicalAnalyser.PriorityTable import PriorityTable
+from LexicalAnalyser.AFD import AFD, D_State
 import string
-from ER_reader import ER_parser
-from PriorityTable import PriorityTable
-from AFD import AFD, D_State
 
 ESPECIAL_CARACTERS = ['?', '*', '+', '.', '|']
 global id
@@ -320,17 +319,3 @@ class ER_to_automata:
             automato_List.append(self.get_automato(parser, token))
         return automato_List, PriorityTable(parser.priority)
 
-if __name__ == '__main__':
-    for directory in os.listdir('ER'):
-        lista, priority = ER_to_automata().getAutomata_fromFile(os.path.join('ER', directory))
-
-    # Ordem de prioridade é definida pela ordem de escrita
-    # no arquivo
-    # os automatos estão nessa ordem
-        print(directory)
-        for automaton in lista:
-            automaton.printAsAFD()
-        print('-'*90)
-        print()
-        print('-'*90)
-    
