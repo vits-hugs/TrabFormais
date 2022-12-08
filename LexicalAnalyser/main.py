@@ -1,24 +1,27 @@
 from LexicalAnalyserGenerator import LexicalAnalyserGenerator
+from Grammar_reader import Gramar_reader
 import os
 
-files = ['er_1','er_pteste','er_teste','parser_texto']
-lista = ['a 3 gatos comeram minha folha A4',
-        ' a  a aa aaaa aaaaaaaaaaaa',
-        'abababc cd ablm alm c d  ',
-        'eu sou Enzo tenho 10cm e 180cm de altura , nasci em  2022 , sou amigo do Vitor e sim A4 e uma palavra abbababababababababbabaabb']
-for name_file in files:
-    file = open(os.path.join('ER', name_file + '.txt'))
-    string = file.read()
-    file.close()
-    print(name_file)
-    LA,toke_types = LexicalAnalyserGenerator.getLexicalAnalyser(string)
-    print(toke_types)
-    tokens, symbolList = LA.exec(lista.pop(0))
-    # print("SymbolList")
-    # symbolList.print()
-    # print()
-    # print('-'*30)
-    # print()
+
+name_file = 'er_teste.txt'
+file = open(os.path.join('ER', name_file))
+string = file.read()
+file.close()
+
+LA,toke_types = LexicalAnalyserGenerator.getLexicalAnalyser(string)
+tokens, symbolList = LA.exec("") #executa o analisador lexico sobre string
+print('Tokens',toke_types)
+
+gramar = Gramar_reader().grammarfromFile('gram.txt',toke_types)
+print('GRAMAR')
+print(gramar.alphabet)
+print(gramar.initial_symbol)
+print(gramar.non_terminals)
+print("SymbolList")
+symbolList.print()
+print()
+print('-'*30)
+print()
 
 #print("Tokens: ", tokens)
 
