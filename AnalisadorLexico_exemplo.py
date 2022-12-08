@@ -1,7 +1,11 @@
 from LexicalAnalyser.LexicalAnalyserGenerator import LexicalAnalyserGenerator
 import os
 
-file_id = 2
+################################################################
+## ANALISADOR LÉXICO
+################################################################
+
+file_id = 0
 name_files = ['detecto_texto','exemplo_aula','exemplo_trabalho']
 
 teste_string = ['A sou o Vitor tenho 19 anos, 173cm , nasci em 2022 , e gosto de escrever abaababbbbab em folhas A4',
