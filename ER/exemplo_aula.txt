@@ -1,1 +1,1 @@
-arvore = (a|b)*abb
+arvore : (a|b)*abb
