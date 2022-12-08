@@ -1,13 +1,6 @@
 from LexicalAnalyser.ER_to_automata import ER_to_automata
-from LexicalAnalyser.SymbolTable import SymbolTable
-from LexicalAnalyser.PriorityTable import PriorityTable
 from LexicalAnalyser.AutomataManager import AutomataManager
-from LexicalAnalyser.AFD import AFD
-from LexicalAnalyser.AFND import AFND
 from LexicalAnalyser.LexicalAnalyser import LexicalAnalyser
-from LexicalAnalyser.Errors import CharNotInAlfabet, UnrecognizedToken
-import LexicalAnalyser.config as config
-import os
 
 class LexicalAnalyserGenerator:
 

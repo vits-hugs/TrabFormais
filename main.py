@@ -1,7 +1,7 @@
 from LexicalAnalyser.LexicalAnalyserGenerator import LexicalAnalyserGenerator
 import os
 
-ERs_file = open(os.path.join('ER', 'er_1.txt'))
+ERs_file = open(os.path.join('ER', 'detecto_texto.txt'))
 REs = ERs_file.read()
 print("Expressões regulares: \n", REs, sep='')
 ERs_file.close()

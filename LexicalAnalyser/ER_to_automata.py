@@ -318,4 +318,3 @@ class ER_to_automata:
             self.token = token
             automato_List.append(self.get_automato(parser, token))
         return automato_List, PriorityTable(parser.priority)
-

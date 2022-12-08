@@ -66,3 +66,4 @@ class AFD:
                 all_transitions.append((key, char, dest_state))
         for transition in all_transitions:
             print(transition[0], transition[1], transition[2], sep=',')
+            

@@ -1,3 +1,5 @@
+
+
 class PriorityTable:
     def __init__(self, token_types: list[str] = []):
         self.table = {}
