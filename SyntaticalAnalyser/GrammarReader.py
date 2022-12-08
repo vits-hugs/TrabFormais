@@ -1,12 +1,12 @@
 import os
-from SyntacticalAnalyzerGenerator import ContextFreeGrammar
+import ContextFreeGrammar
 
-class Gramar_reader:
+class GramarReader:
 
     def __init__(self):
         pass
 
-    def get_production_list(self,production:str,tokens:set ):
+    def get_production_list(self,production:str,tokens:set):
         production_list = []
         number = 0
         while number < len(production):
@@ -48,7 +48,7 @@ class Gramar_reader:
             #print(lista[0],lista[1])
         return gramar
 if __name__ == '__main__':
-    reader = Gramar_reader()
+    reader = GrammarReader()
     grammar = reader.grammarfromFile('gram.txt',{'id','pastel'})
     print(grammar.alphabet)
     print(grammar.initial_symbol)
