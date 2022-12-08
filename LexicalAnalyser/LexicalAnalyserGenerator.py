@@ -35,7 +35,7 @@ class LexicalAnalyserGenerator:
         complete_AFD.print()
         print()
 
-        return LexicalAnalyser(complete_AFD)
+        return LexicalAnalyser(complete_AFD),set(priority_table.table.keys())
 
 
 if __name__ == '__main__':

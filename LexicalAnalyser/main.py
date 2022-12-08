@@ -11,14 +11,14 @@ for name_file in files:
     string = file.read()
     file.close()
     print(name_file)
-    LA = LexicalAnalyserGenerator.getLexicalAnalyser(string)
-
+    LA,toke_types = LexicalAnalyserGenerator.getLexicalAnalyser(string)
+    print(toke_types)
     tokens, symbolList = LA.exec(lista.pop(0))
-    print("SymbolList")
-    symbolList.print()
-    print()
-    print('-'*30)
-    print()
+    # print("SymbolList")
+    # symbolList.print()
+    # print()
+    # print('-'*30)
+    # print()
 
 #print("Tokens: ", tokens)
 
