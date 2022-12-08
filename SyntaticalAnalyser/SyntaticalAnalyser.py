@@ -9,6 +9,8 @@ class LRParser:
     action: dict
     goto: dict
 
+    history: list
+
     def __init__(self, grammar: ContextFreeGrammar):
         self.grammar = grammar
         self.stack = ["$"]
@@ -16,6 +18,7 @@ class LRParser:
         self.goto = {}
         self.canonical_collection = self.__setCanonicalCollection__()
         self.inital_state = self.canonical_collection.index(self.grammar.getInitialItem())
+        self.history = []
 
     def __closure__(self, set_of_items: set):
         closure_set = set_of_items.copy() #{(state, dot_pos)}
@@ -69,7 +72,7 @@ class LRParser:
     def __constructSLRParsingTable__(self):
         # para cado estado canonico i, as funções de parsing são definidas tal que:
         for i, canonicalSet in enumerate(self.canonical_collection):
-            for item in canonicalSet:
+            for item in canonicalSet: # item: (prod_pos, dot_pos)
                 production = self.grammar.ordered_productions[item[0]]
                 if (production[0] is self.grammar.initial_symbol \
                         and item[1] == len(production[1])):
@@ -88,19 +91,53 @@ class LRParser:
                 self.goto[(i, non_terminal)] = self.canonical_collection.index(self.__goto__(canonicalSet, non_terminal))
 
     def parse(self, input_buffer: list):
+
         input_buffer.append(("$", None))
         stack = [self.inital_state]
+
+                         #stack   symbols  input        action
+        self.history = [[stack.copy(), [], input_buffer, "shift"]]
+
         while (True):
-            action = self.action[(stack[0],input_buffer[0][0])]
-            if (action == True):
-                break #parsing finished
-            elif (action[0] == "s"):
-                stack.insert(0, action[1])
+
+            __action = self.action[(stack[0], input_buffer[0][0])]
+
+            if (__action == "acc"):
+                self.history.append([stack.copy(), [], input_buffer, "acc"])
+                return True
+            elif (__action[0] == "s"):
+                stack.insert(0, __action[1])
                 input_buffer.pop()
-            elif (action[0] == "r"):
-                production = action[1]
+            elif (__action[0] == "r"):
+                production = __action[1]
                 del stack[:len(production[1])]
                 stack.insert(0, self.goto[(stack[0], production[0])])
                 #
             else:
-                pass #error
+                return False
+            self.history.append([stack.copy(), [], input_buffer, __action])
+
+    def printParsingTable(self):
+        print("ACTION")
+        print(self.action)
+        print("\n")
+        print("GOTO")
+        print(self.goto)
+        print("\n")
+
+    def printHistory(self):
+        print("stack\t\t\taction")
+        for moment in self.history:
+            stack = moment[0]
+            symbols = moment[1]
+            input = moment[2]
+            action = moment[3]
+
+            if (action == "acc"):
+                action = "acc"
+            elif (action[0] == "s"):
+                action = "shift {}".format(action[1])
+            elif (action[0] == "r"):
+                action = "reduce {} -> {}".format(action[1][0], action[1][1])
+
+            print("{}\t\t\t{}".format(stack, action))

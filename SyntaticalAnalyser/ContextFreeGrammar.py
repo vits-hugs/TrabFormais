@@ -76,12 +76,10 @@ class ContextFreeGrammar:
             self.__eliminateImidiateLeftRecursion__(head)
 
     def initialize(self):
-        print(self.__productions)
         self.__eliminateLeftRecursion__()
         self.__augment__()
         self.__orderProductions__()
-        print(self.ordered_productions)
-        self.first_dict = self.__calculateFirsts__()
+        #self.first_dict = self.__calculateFirsts__()
         #self.follow_dict = self.__calculateFollows__()
 
     def addProduction(self, head: str, body: list):
