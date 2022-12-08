@@ -1,6 +1,3 @@
-import copy
-from PriorityTable import PriorityTable
-import sys
 
 
 class N_State:
@@ -18,13 +15,6 @@ class AFND:
         self.initial_state_name = initial_state_name
         self.alfabet = alfabet
         self.transition_table = transition_table
-
-    def print(self):
-        for state_name, state in self.transition_table.items():
-            print(str(state_name).ljust(20), end=' ')
-            print("Transitions: ", str(state.transitions).ljust(70), end=' ')
-            print("Token: ", state.token_type)
-        print()
 
     def print(self):
         # Número de estados

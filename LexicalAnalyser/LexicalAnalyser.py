@@ -1,12 +1,7 @@
-from ER_to_automata import ER_to_automata
-from SymbolTable import SymbolTable
-from PriorityTable import PriorityTable
-from AutomataManager import AutomataManager
-from AFD import AFD
-from AFND import AFND
-from Errors import CharNotInAlfabet, UnrecognizedToken
-import config
-import os
+from LexicalAnalyser.SymbolTable import SymbolTable
+from LexicalAnalyser.AFD import AFD
+from LexicalAnalyser.Errors import UnrecognizedToken
+import LexicalAnalyser.config as config
 
 class LexicalAnalyser():
     def __init__(self, automaton: AFD):

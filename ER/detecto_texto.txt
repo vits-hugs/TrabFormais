@@ -4,8 +4,6 @@ letter: [a-zA-Z]
 algarismo: [0-9]
 ano: algarismoalgarismoalgarismoalgarismo
 number: algarismo*
-feio: Enzo
-tamanho_membro: [0-4]algarismocm
 altura_em_cm: [0-2]numbercm
 teste_prof: (a|b)*abb
 nome: upperlower*

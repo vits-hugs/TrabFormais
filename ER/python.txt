@@ -1,0 +1,13 @@
+digit: [0-9]
+letter: [a-zA-Z]
+id: letter(letter|digit)*
+if_ : if
+else_ : else 
+elif_ : elif
+while_ : while 
+true : True 
+false : False 
+Type : Int|str|float
+func_begin: def 
+func : id{}
+list: [digit*]
