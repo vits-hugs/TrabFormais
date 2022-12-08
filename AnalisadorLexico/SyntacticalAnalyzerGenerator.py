@@ -1,4 +1,5 @@
 from io import StringIO
+from copy import copy
 
 class EndOfFileException(Exception):
     pass
@@ -316,6 +317,7 @@ class LRParser:
     inital_state: int
     action: dict
     goto: dict
+    stack_hist: list
 
     def __init__(self, grammar: ContextFreeGrammar):
         self.grammar = grammar
@@ -324,6 +326,7 @@ class LRParser:
         self.goto = {}
         self.canonical_collection = self.__setCanonicalCollection__()
         self.inital_state = self.canonical_collection.index(self.grammar.getInitialItem())
+        self.stack_hist = []
 
     def __closure__(self, set_of_items: set):
         closure_set = set_of_items.copy()
@@ -400,6 +403,7 @@ class LRParser:
         while (True):
             action = self.action[(stack[0],input_buffer[0])]
             if (action == True):
+                self.stack_hist.append(copy(stack))
                 break #parsing finished
             elif (action[0] == "s"):
                 stack.insert(0, action[1])
@@ -411,6 +415,14 @@ class LRParser:
                 #
             else:
                 pass #error
+
+            self.stack_hist.append(copy(stack))
+
+    def printStackHist(self):
+        for stack in self.stack_hist:
+            print(''.join(stack))
+
+
             
 class LexicalAnalyzerGenerator:
     lexemme_automaton: DeterministicAutomaton
