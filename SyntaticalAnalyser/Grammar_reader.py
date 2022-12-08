@@ -1,5 +1,5 @@
 import os
-from SyntacticalAnalyzerGenerator import ContextFreeGrammar
+import ContextFreeGrammar
 
 class Gramar_reader:
 
