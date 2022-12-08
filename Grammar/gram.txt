@@ -1,0 +1,5 @@
+S-> aSb|D|&
+D-> c|d|F
+E -> E | EF | ED
+F -> pastel|id
+G -> cpasteleida|idd 
