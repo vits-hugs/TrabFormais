@@ -30,6 +30,7 @@ class Gramar_reader:
         file.close()
         lista_trans = []
         non_terminal = set()
+        alphabet = set()
         for line_index in range(len(grammar_text)):
             linha = grammar_text[line_index].replace('\n','')
             linha = linha.replace(' ','').split('->')
@@ -39,10 +40,16 @@ class Gramar_reader:
                 production_list = self.get_production_list(production,tokens)
                 lista_trans.append((linha[0],production_list))
                 non_terminal.add(linha[0])
-        gramar = ContextFreeGrammar(set(),initial_symbol,non_terminal)
+                [alphabet.add(i) for i in production_list]
+        
+        gramar = ContextFreeGrammar(alphabet.difference(non_terminal),initial_symbol,non_terminal)
         for lista in lista_trans:
             gramar.addProduction(lista[0],lista[1])
-            print(lista[0],lista[1])
+            #print(lista[0],lista[1])
+        return gramar
 if __name__ == '__main__':
     reader = Gramar_reader()
-    reader.grammarfromFile('gram.txt',{'id','pastel'})
+    grammar = reader.grammarfromFile('gram.txt',{'id','pastel'})
+    print(grammar.alphabet)
+    print(grammar.initial_symbol)
+    print(grammar.non_terminals)
