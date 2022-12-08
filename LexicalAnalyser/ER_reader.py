@@ -21,6 +21,7 @@ class ER_parser:
                 break
         return text                
 
+    # Resolve [a-zAz] [0-9] type expression
     def solve_exp(self,text):
         start = text.find('[')
         end = text.find(']')
@@ -91,6 +92,7 @@ class ER_parser:
         for key,value in self.definitions.items():
             self.definitions[key] = self.put_concatenate_operator(value.strip())
 
+    #define 
     def recursive_define(self):
         has_defined = True        
         while (has_defined):
