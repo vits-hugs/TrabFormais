@@ -28,4 +28,13 @@ class LexicalAnalyserGenerator:
         complete_AFD.print()
         print()
 
+<<<<<<< HEAD
         return LexicalAnalyser(complete_AFD)
+=======
+        return LexicalAnalyser(complete_AFD),set(priority_table.table.keys())
+
+
+if __name__ == '__main__':
+
+    algo = LexicalAnalyserGenerator().getLexicalAnalyser('ER/er_teste.txt')
+>>>>>>> main-pedro
