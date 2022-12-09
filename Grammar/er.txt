@@ -1,0 +1,13 @@
+file -> defs | &
+defs -> def \n defs | def \n
+def -> id : re
+re -> conc | conc \| re | &
+conc -> exp | exp conc
+exp -> grp | grp op
+op -> + | * | ?
+grp -> [ seqs ] | { val } | ( re )
+seqs -> seq | seq seqs
+seq -> nival | llval - llval | ulval - ulval | nval - nval
+nival -> asym | anval
+anval -> llval | ulval | nval
+val -> id | nival

@@ -1,4 +1,4 @@
-from SyntaticalAnalyser.ContextFreeGrammar import ContextFreeGrammar
+from ContextFreeGrammar import ContextFreeGrammar
 import os
 
 class GrammarReader:
@@ -47,9 +47,14 @@ class GrammarReader:
             gramar.addProduction(lista[0],lista[1])
             #print(lista[0],lista[1])
         return gramar
+
 if __name__ == '__main__':
     reader = GrammarReader()
     grammar = reader.grammarfromFile('gram.txt',{'id','pastel'})
     print(grammar.alphabet)
     print(grammar.initial_symbol)
     print(grammar.non_terminals)
+    print(grammar.getProductions())
+
+    grammar.initialize()
+    print(grammar.ordered_productions)

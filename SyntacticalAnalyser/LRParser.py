@@ -1,8 +1,6 @@
-from SyntaticalAnalyser.ContextFreeGrammar import ContextFreeGrammar
+from SyntacticalAnalyser.ContextFreeGrammar import ContextFreeGrammar
 
 class LRParser:
-    #symbol_table: SymbolTable
-    #lexical_analyser: LexicalAnalyzer
     grammar: ContextFreeGrammar
     canonical_collection: list #[(state, dot_pos)]
     inital_state: int
