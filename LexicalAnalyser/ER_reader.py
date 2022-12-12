@@ -8,6 +8,7 @@ class ER_parser:
         self.priority = []
 
     def put_concatenate_operator(self,text):
+        text = text.replace(" ","")
         i = 0
         while True:
             if text[i] not in ['|','.','(']:
