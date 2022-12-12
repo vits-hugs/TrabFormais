@@ -29,8 +29,9 @@ class LexicalAnalyser():
             if tokenType == None:
                 raise UnrecognizedToken(lexeme, self.lexemeBegin, self.foward)
 
-            tokenList.append((tokenType, lexeme))
-            symbolTable.addEntry(lexeme, tokenType, lexeme, self.lexemeBegin, self.foward)
+            symbolTableKey = lexeme + '-' + str(self.lexemeBegin)
+            tokenList.append((tokenType, symbolTableKey))
+            symbolTable.addEntry(symbolTableKey, tokenType, lexeme, self.lexemeBegin, self.foward)
             self.lexemeBegin = self.foward
 
         return tokenList, symbolTable
